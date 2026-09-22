@@ -23,6 +23,20 @@
       <input type="text" id="nameInput" placeholder="名前（例: コーポレートサイト）" required />
       <input type="url" id="urlInput" placeholder="https://example.com" required />
       <button type="submit" class="primary">追加</button>
+      <details class="advanced-settings">
+        <summary>詳細設定（省略可）: Webhook通知・チェック間隔</summary>
+        <div class="advanced-fields">
+          <label>
+            Webhook URL（up↔down切り替わり時にJSON POST。Slack/Discordの
+            incoming webhook URLをそのまま使えます）
+            <input type="url" id="webhookInput" placeholder="https://hooks.slack.com/services/..." />
+          </label>
+          <label>
+            チェック間隔（秒・省略時は全体設定を使用。5秒〜86400秒）
+            <input type="number" id="intervalInput" min="5" max="86400" placeholder="例: 30" />
+          </label>
+        </div>
+      </details>
     </form>
     <p class="form-msg" id="formMsg"></p>
   </section>

@@ -29,19 +29,27 @@
         grid.innerHTML = '<p class="empty-state">公開されている監視対象はありません。</p>';
       } else {
         grid.innerHTML = data.monitors
-          .map(
-            (m) => `
+          .map((m) => {
+            const stats = m.uptimeStats || {};
+            const pct = (s) => (s && s.pct !== null && s.pct !== undefined ? `${s.pct}%` : '-');
+            return `
           <div class="monitor-card">
             <div class="top-row">
               <div class="monitor-name">${escapeHtml(m.name)}</div>
               <span class="status-pill ${m.status}"><span class="dot"></span>${STATUS_LABEL[m.status]}</span>
             </div>
             <div class="monitor-meta">
-              <div>稼働率: ${m.uptimePct === null ? '-' : m.uptimePct + '%'}</div>
+              <div>稼働率(直近): ${m.uptimePct === null ? '-' : m.uptimePct + '%'}</div>
               <div>最終確認: ${fmtTime(m.lastCheckedAt)}</div>
             </div>
-          </div>`
-          )
+            <div class="uptime-long-term">
+              <div><span class="stat-label">24h</span><span class="stat-value">${pct(stats.last24h)}</span></div>
+              <div><span class="stat-label">7日</span><span class="stat-value">${pct(stats.last7d)}</span></div>
+              <div><span class="stat-label">30日</span><span class="stat-value">${pct(stats.last30d)}</span></div>
+              <div><span class="stat-label">全期間</span><span class="stat-value">${pct(stats.allTime)}</span></div>
+            </div>
+          </div>`;
+          })
           .join('');
       }
 
