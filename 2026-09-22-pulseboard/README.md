@@ -21,12 +21,20 @@ page — no external database, no paid third-party API required.
 - Background scheduler performs a real HTTP GET against each monitored URL
   on an interval (default 15s, configurable via `CHECK_INTERVAL_MS`)
 - Per-monitor status (`up` / `down` / `pending`), last response time, last
-  status code, and a rolling uptime % (based on the last 50 checks kept in
-  memory)
+  status code, and a rolling uptime % (based on the last 50 checks kept
+  per monitor)
 - Incident log: an entry is recorded whenever a monitor flips from up→down
   or down→up
+- **Local file-based persistence** (new): monitors, check history,
+  incidents and the free/pro plan flag survive a server restart, saved to a
+  JSON file on disk (`data/pulseboard.json` by default) — no external
+  database, no cloud service. See "Persistence" below.
+- **Optional admin Basic Auth** (new): set `ADMIN_USER` + `ADMIN_PASSWORD`
+  to require login for the admin dashboard and every admin API route. Off
+  by default. See "Admin authentication" below.
 - A public, read-only status page (`/status.html`) that aggregates overall
-  system status + per-monitor status + recent incidents
+  system status + per-monitor status + recent incidents — never gated by
+  admin auth
 - A free-plan cap of 3 monitors, and a **mock** "Upgrade to Pro" button that
   removes the cap client-side — no real payment is processed (see
   `LEGAL_REVIEW.md` and `DEPLOYMENT.md`)
@@ -36,14 +44,53 @@ page — no external database, no paid third-party API required.
 
 ## What's explicitly out of scope for this MVP
 
-- Persistent storage — all data (monitors, checks, incidents, plan) lives in
-  process memory and is **reset when the server restarts**
-- Real user accounts / authentication (single shared admin view)
+- Real user accounts / multi-user auth — the optional Basic Auth is a
+  single shared admin login, not per-user accounts
 - Real outbound notifications (email/Slack/SMS) — not implemented at all
 - Real payment processing — the "Pro" upgrade is a UI-only stub
 - Multi-tenant support (one PulseBoard instance = one team's monitors)
+- A real production-grade database (the JSON-file store is intentionally
+  simple — fine for one small team's data locally, not built for
+  concurrent multi-process writers or huge datasets)
 
 See `QA_NOTES.md` for the full list of known limitations.
+
+## Persistence
+
+By default, all state is saved to `data/pulseboard.json` (relative to the
+project root) after every write, using an atomic write (temp file +
+rename) so a crash mid-write can't corrupt the file. On startup, that file
+is loaded back if present; if missing (first run) or unreadable (corrupt),
+PulseBoard starts from empty state instead of crashing.
+
+| Variable        | Default                    | Description                                          |
+|------------------|-----------------------------|-------------------------------------------------------|
+| `DATA_FILE`       | `data/pulseboard.json`      | Path to the persistence file                          |
+| `PERSIST`         | (unset)                    | Set to `0` to disable persistence (in-memory only)     |
+
+The `data/` directory is git-ignored and excluded from the Docker build
+context — it's local runtime state, not something to commit or bake into
+an image. When running via Docker, mount a volume at `/app/data` so data
+survives the container being recreated (see `Dockerfile`).
+
+## Admin authentication
+
+The admin dashboard (`/`) and every admin API route (create/delete a
+monitor, run a manual check, upgrade/downgrade plan) can optionally be
+protected with HTTP Basic Auth:
+
+| Variable          | Default   | Description                                   |
+|--------------------|-----------|-------------------------------------------------|
+| `ADMIN_USER`        | (unset)   | Admin username; auth is off unless both are set |
+| `ADMIN_PASSWORD`    | (unset)   | Admin password                                  |
+
+```bash
+ADMIN_USER=admin ADMIN_PASSWORD=change-me npm start
+```
+
+The public status page (`/status.html`, `GET /api/status`) is never gated
+by this, regardless of whether admin auth is configured — it needs to stay
+reachable by anyone it's shared with.
 
 ## Tech stack
 
@@ -71,6 +118,10 @@ Environment variables (all optional):
 |---------------------|---------|-------------------------------------------|
 | `PORT`               | `3000`  | HTTP port to listen on                    |
 | `CHECK_INTERVAL_MS`  | `15000` | How often the background checker runs     |
+| `DATA_FILE`          | `data/pulseboard.json` | Path to the local persistence file |
+| `PERSIST`            | (unset) | Set to `0` to disable persistence (in-memory only) |
+| `ADMIN_USER`         | (unset) | Admin dashboard username (see "Admin authentication") |
+| `ADMIN_PASSWORD`     | (unset) | Admin dashboard password |
 
 For local development with auto-restart on file changes:
 
@@ -84,10 +135,12 @@ npm run dev
 npm test
 ```
 
-This runs 21 automated tests (unit tests for the in-memory store, unit tests
-for the HTTP checker against local test servers, and integration tests for
-every API route via `supertest`) — no real external network calls are made
-in the test suite, so it runs the same in CI as it does offline.
+This runs 41 automated tests (unit tests for the store — including
+file-based persistence and a simulated-restart round trip, unit tests for
+the HTTP checker against local test servers, integration tests for every
+API route via `supertest`, and tests for the optional admin Basic Auth) —
+no real external network calls are made in the test suite, so it runs the
+same in CI as it does offline.
 
 ## API summary
 
@@ -107,12 +160,14 @@ in the test suite, so it runs the same in CI as it does offline.
 ```
 2026-09-22-pulseboard/
 ├── server/
-│   ├── app.js           # Express app + routes (exported for tests)
+│   ├── app.js           # Express app + routes + optional admin Basic Auth (exported for tests)
 │   ├── index.js         # Entry point: seeds demo data, starts scheduler + HTTP server
-│   ├── store.js         # In-memory data store (monitors, checks, incidents, plan)
+│   ├── store.js         # Data store (monitors, checks, incidents, plan), optionally file-backed
+│   ├── persistence.js    # Atomic JSON-file read/write used by store.js
 │   ├── checker.js        # HTTP health-check logic (testable, injectable fetch)
 │   └── demo-target.js    # Local always-up/always-down server used to seed demo data
 ├── public/               # Static frontend (dashboard + public status page)
+├── data/                  # Local persisted state (git-ignored, created at runtime)
 ├── tests/                 # node:test + supertest test suite
 ├── QA_NOTES.md
 ├── LEGAL_REVIEW.md

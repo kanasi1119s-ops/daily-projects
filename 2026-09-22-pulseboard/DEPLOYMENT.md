@@ -1,34 +1,63 @@
 # DEPLOYMENT.md — PulseBoard (human-executed runbook)
 
 This file is a runbook for a **human** to follow. The automated pipeline
-that built this MVP did **not** perform any of the steps below — no domain
-was purchased, no DNS was touched, no payment provider was connected, no
-cloud resource was provisioned, and nothing was published to a public
-domain or social account.
+that built this MVP (and the follow-up pass that added persistence, admin
+auth, and Docker verification-by-inspection) did **not** perform any of the
+steps below — no domain was purchased, no DNS was touched, no payment
+provider was connected, no cloud resource was provisioned, and nothing was
+published to a public domain or social account.
 
 ## 0. Local build/test confirmation (done by the pipeline)
 
-- `npm install && npm test` was run in this environment: **21/21 tests
-  pass**.
+- `npm install && npm test` was run in this environment: **41/41 tests
+  pass** (up from 21 — the follow-up pass added 12 persistence tests and 8
+  admin-auth tests).
 - The server was manually started (`node server/index.js`) and its API
   endpoints (`/api/monitors`, `/api/status`, `/api/incidents`,
   `POST /api/monitors`) were exercised with `curl` and returned correct
   results.
-- `Dockerfile` was written as reference deploy config, but the Docker
-  daemon was **not available in this environment**, so the image was **not**
-  build-tested here. A human should run `docker build -t pulseboard .` and
-  `docker run -p 3000:3000 pulseboard` locally before relying on it.
+- **(Follow-up pass) Persistence was verified against a real restart**: a
+  monitor created via the API survived a `kill -9` of the server process
+  and a fresh process startup against the same data file, with its check
+  history intact and without the demo monitors being re-seeded on top of
+  it.
+- **(Follow-up pass) Admin Basic Auth was verified with curl** against a
+  running server with `ADMIN_USER`/`ADMIN_PASSWORD` set: admin routes
+  return 401 with no/wrong credentials and 200 with correct ones; the
+  public status page and its API stayed reachable with no credentials
+  either way.
+- `Dockerfile` was written as reference deploy config. The Docker daemon
+  was **still not available in this environment** in the follow-up pass
+  either (`docker build`/`docker info` fail to reach the socket, and
+  starting `dockerd` is blocked by sandbox `ulimit` restrictions), so the
+  image was **not** build-tested end-to-end here, same as before. As the
+  next best verification: `COPY` paths were confirmed to match the repo
+  layout, the Dockerfile's exact `npm ci --omit=dev` was run manually in an
+  isolated copy of the repo (installs `express`, correctly omits the
+  `supertest` dev dependency), and the Dockerfile's exact `HEALTHCHECK`
+  command was run against a server started from that production-only
+  install with `NODE_ENV=production` — it returned HTTP 200 / exit 0. No
+  bugs were found by inspection; a `VOLUME ["/app/data"]` was added since
+  persistence now writes there. **A human should still run
+  `docker build -t pulseboard .` and `docker run -p 3000:3000 pulseboard`
+  locally before relying on the image** — this remains unverified as an
+  actual image build/run.
 
 ## 1. Before going live at all
 
-- [ ] Decide whether PulseBoard v1 actually needs real persistence (a real
-      database) before selling it — the current in-memory store resets on
-      every restart/deploy, which is not acceptable for a paying customer's
-      monitor data. This is the single biggest gap between this MVP and a
-      sellable product.
-- [ ] Add authentication (even a simple single-admin password) before
-      exposing the dashboard (not just the status page) publicly — currently
-      anyone who can reach the server can add/delete monitors.
+- [x] ~~Decide whether PulseBoard v1 actually needs real persistence~~ —
+      **done in the follow-up pass.** State now survives a restart via a
+      local JSON file (see README.md "Persistence"). This is still a
+      single-file local store, not a production-grade database (no
+      concurrent multi-process writers, no replication/backups) — evaluate
+      whether that's sufficient before selling to paying customers, or
+      whether a real database is still warranted at that point.
+- [x] ~~Add authentication~~ — **done in the follow-up pass**: optional
+      HTTP Basic Auth via `ADMIN_USER`/`ADMIN_PASSWORD` gates the dashboard
+      and admin API. It is **off by default** — a human must explicitly set
+      both env vars (to real, non-default values) before exposing the
+      dashboard publicly. This is still a single shared admin login, not
+      per-user accounts with roles/audit trails.
 - [ ] Add basic rate limiting to the public API.
 
 ## 2. Domain & hosting (human only — not done by this pipeline)
@@ -47,6 +76,14 @@ domain or social account.
       without explicit human action and review.
 - [ ] Set the `PORT` env var if the host requires a specific port, and
       `CHECK_INTERVAL_MS` if a different check cadence is wanted.
+- [ ] Attach a **persistent volume/disk** at `/app/data` on the chosen host
+      (e.g. a Render Disk, a Fly.io Volume) — without one, the container's
+      filesystem (and therefore `data/pulseboard.json`) is wiped on every
+      redeploy/restart, same as the old in-memory-only behavior. The
+      `Dockerfile` declares `VOLUME ["/app/data"]` as a hint for this.
+- [ ] Set real, non-default `ADMIN_USER`/`ADMIN_PASSWORD` env vars on the
+      host before exposing the dashboard — it has **no auth at all** unless
+      both are explicitly set.
 
 ## 3. Payments (human only — currently fully mocked)
 
@@ -79,8 +116,12 @@ domain or social account.
 ## 5. Deploy config included in this repo (reference only)
 
 - `Dockerfile` — builds a production image (`node server/index.js`,
-  port 3000, container healthcheck against `/api/status`).
-- `.dockerignore` — excludes `node_modules`, tests, docs from the image.
+  port 3000, container healthcheck against `/api/status`, `VOLUME
+  ["/app/data"]` for the persisted data file). See "0. Local build/test
+  confirmation" above for how it was verified this cycle (still not an
+  actual `docker build`, since no daemon is available here).
+- `.dockerignore` — excludes `node_modules`, tests, docs, and the local
+  `data/` directory from the image.
 - `.github/workflows/ci.yml` — runs `npm test` on push/PR touching this
   project folder. This workflow will start running automatically once this
   branch/PR is on GitHub with Actions enabled for the repo — **that itself
