@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ステータス - PulseBoard</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="dot"></span> PulseBoard ステータス</div>
+    <a class="plain-link" href="index.html">&larr; 管理ダッシュボードへ</a>
+  </header>
+
+  <div id="overallBanner" class="overall-banner unknown">状態を確認中...</div>
+
+  <section class="card">
+    <h2>サービス状況</h2>
+    <div class="monitor-grid" id="statusGrid">
+      <p class="empty-state">読み込み中...</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>直近のインシデント</h2>
+    <ul class="incident-list" id="statusIncidentList">
+      <li class="empty-state" style="border:none;">まだインシデントはありません</li>
+    </ul>
+  </section>
+
+  <footer class="foot">
+    このページは公開用のステータスページです（読み取り専用・デモ）。10秒ごとに自動更新されます。
+  </footer>
+</div>
+
+<script src="status.js"></script>
+</body>
+</html>

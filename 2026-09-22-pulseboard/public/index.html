@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PulseBoard - シンプル稼働監視ダッシュボード</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="dot"></span> PulseBoard</div>
+    <div class="header-actions">
+      <span id="planBadge" class="badge free">Free プラン</span>
+      <button id="upgradeBtn" class="primary">Pro にアップグレード（デモ）</button>
+      <a class="plain-link" href="status.html" target="_blank" rel="noopener">公開ステータスページ &rarr;</a>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>監視対象を追加</h2>
+    <form class="add-monitor" id="addForm">
+      <input type="text" id="nameInput" placeholder="名前（例: コーポレートサイト）" required />
+      <input type="url" id="urlInput" placeholder="https://example.com" required />
+      <button type="submit" class="primary">追加</button>
+    </form>
+    <p class="form-msg" id="formMsg"></p>
+  </section>
+
+  <section class="card">
+    <h2>監視対象一覧</h2>
+    <div class="monitor-grid" id="monitorGrid">
+      <p class="empty-state">読み込み中...</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>インシデント履歴</h2>
+    <ul class="incident-list" id="incidentList">
+      <li class="empty-state" style="border:none;">まだインシデントはありません</li>
+    </ul>
+  </section>
+
+  <footer class="foot">
+    PulseBoard MVP デモ — データはサーバー再起動でリセットされます。決済は模擬（デモ）です。<br/>
+    <a href="../QA_NOTES.md" target="_blank" rel="noopener">既知の制約</a>
+  </footer>
+</div>
+
+<div class="modal-backdrop hidden" id="upgradeModal">
+  <div class="modal">
+    <h3>Pro プランへアップグレード（デモ）</h3>
+    <p>これはデモ用のスタブです。実際の決済は発生しません。本番運用時は Stripe 等の決済プロバイダを接続してください（詳細は DEPLOYMENT.md）。</p>
+    <div class="modal-actions">
+      <button id="cancelUpgrade">キャンセル</button>
+      <button id="confirmUpgrade" class="primary">デモアップグレードを適用</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
