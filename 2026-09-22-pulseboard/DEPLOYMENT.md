@@ -1,47 +1,76 @@
 # DEPLOYMENT.md — PulseBoard (human-executed runbook)
 
 This file is a runbook for a **human** to follow. The automated pipeline
-that built this MVP (and the follow-up pass that added persistence, admin
-auth, and Docker verification-by-inspection) did **not** perform any of the
-steps below — no domain was purchased, no DNS was touched, no payment
-provider was connected, no cloud resource was provisioned, and nothing was
-published to a public domain or social account.
+that built this MVP (and the follow-up passes that added persistence,
+admin auth, webhooks, long-term uptime aggregation, per-monitor check
+intervals, API rate limiting, and a real-browser UI smoke test) did **not**
+perform any of the steps below — no domain was purchased, no DNS was
+touched, no payment provider was connected, no cloud resource was
+provisioned, and nothing was published to a public domain or social
+account.
 
 ## 0. Local build/test confirmation (done by the pipeline)
 
-- `npm install && npm test` was run in this environment: **41/41 tests
-  pass** (up from 21 — the follow-up pass added 12 persistence tests and 8
-  admin-auth tests).
+- `npm install && npm test` was run in this environment: **77/77 tests
+  pass** (up from 41 — this pass added 8 webhook tests, 6 long-term uptime
+  tests, 9 per-monitor interval tests, 6 rate-limit tests, plus a few more
+  `PATCH`/`uptimeStats`/edit-auth cases folded into the existing API/auth
+  suites).
+- A real headless-browser UI smoke test (`npm run smoke:ui`, Playwright +
+  the sandbox's pre-installed Chromium) was also run end-to-end: added a
+  monitor through the actual dashboard form, triggered a real check via
+  the UI, and confirmed it on the public status page — see
+  `screenshots/dashboard.png` / `screenshots/status.png` and
+  `QA_NOTES.md`.
 - The server was manually started (`node server/index.js`) and its API
   endpoints (`/api/monitors`, `/api/status`, `/api/incidents`,
   `POST /api/monitors`) were exercised with `curl` and returned correct
   results.
-- **(Follow-up pass) Persistence was verified against a real restart**: a
-  monitor created via the API survived a `kill -9` of the server process
-  and a fresh process startup against the same data file, with its check
-  history intact and without the demo monitors being re-seeded on top of
-  it.
-- **(Follow-up pass) Admin Basic Auth was verified with curl** against a
-  running server with `ADMIN_USER`/`ADMIN_PASSWORD` set: admin routes
-  return 401 with no/wrong credentials and 200 with correct ones; the
-  public status page and its API stayed reachable with no credentials
-  either way.
-- `Dockerfile` was written as reference deploy config. The Docker daemon
-  was **still not available in this environment** in the follow-up pass
-  either (`docker build`/`docker info` fail to reach the socket, and
-  starting `dockerd` is blocked by sandbox `ulimit` restrictions), so the
-  image was **not** build-tested end-to-end here, same as before. As the
-  next best verification: `COPY` paths were confirmed to match the repo
-  layout, the Dockerfile's exact `npm ci --omit=dev` was run manually in an
-  isolated copy of the repo (installs `express`, correctly omits the
-  `supertest` dev dependency), and the Dockerfile's exact `HEALTHCHECK`
-  command was run against a server started from that production-only
-  install with `NODE_ENV=production` — it returned HTTP 200 / exit 0. No
-  bugs were found by inspection; a `VOLUME ["/app/data"]` was added since
-  persistence now writes there. **A human should still run
-  `docker build -t pulseboard .` and `docker run -p 3000:3000 pulseboard`
-  locally before relying on the image** — this remains unverified as an
-  actual image build/run.
+- **Persistence was verified against a real restart**: a monitor created
+  via the API survived a `kill -9` of the server process and a fresh
+  process startup against the same data file, with its check history
+  intact and without the demo monitors being re-seeded on top of it.
+- **Admin Basic Auth was verified with curl** against a running server
+  with `ADMIN_USER`/`ADMIN_PASSWORD` set: admin routes (including the new
+  `PATCH /api/monitors/:id` edit route) return 401 with no/wrong
+  credentials and 200 with correct ones; the public status page and its
+  API stayed reachable with no credentials either way.
+- **Webhook delivery, long-term uptime rollups, per-monitor intervals and
+  rate limiting** were each verified by automated tests that exercise the
+  real code paths (a local HTTP server as the webhook receiver, real
+  timers for interval scheduling, a real running Express app for the rate
+  limiter) — see `QA_NOTES.md` for the full breakdown per test file.
+- `Dockerfile` was written as reference deploy config. **This pass, the
+  Docker daemon actually started successfully** in this sandbox (`docker
+  info` reported a running server — an improvement over previous passes,
+  where the daemon itself could not start). `docker build -t pulseboard
+  2026-09-22-pulseboard` was then run for real, but it still did not
+  complete: pulling the `node:20-alpine` base image failed —
+
+  ```
+  ERROR: failed to build: failed to solve: node:20-alpine: failed to
+  resolve source metadata for docker.io/library/node:20-alpine:
+  ... Get "https://production.cloudfront.docker.com/...": Forbidden
+  ```
+
+  This environment's own proxy diagnostics confirmed this is a `403`
+  **policy denial** on outbound access to Docker Hub's CDN
+  (`production.cloudfront.docker.com`), not a transient network error —
+  so, per this environment's own guidance not to route around an explicit
+  egress policy denial, it was not retried further. This is a more
+  specific finding than previous passes ("no daemon available"): the
+  daemon itself now works fine here, but this particular sandbox's network
+  policy does not allow pulling images from Docker Hub. As the next best
+  verification (same as previous passes): `COPY` paths were confirmed to
+  match the repo layout, the Dockerfile's exact `npm ci --omit=dev` was run
+  manually in an isolated copy of the repo (installs `express`, correctly
+  omits `supertest` and `playwright` dev dependencies), and the
+  Dockerfile's exact `HEALTHCHECK` command was run against a server
+  started from that production-only install with `NODE_ENV=production` —
+  it returned HTTP 200 / exit 0. **A human running this in an environment
+  with normal Docker Hub egress should run `docker build -t pulseboard .`
+  and `docker run -p 3000:3000 pulseboard` locally** — this remains
+  unverified as an actual image build/run end to end.
 
 ## 1. Before going live at all
 
@@ -58,7 +87,14 @@ published to a public domain or social account.
       both env vars (to real, non-default values) before exposing the
       dashboard publicly. This is still a single shared admin login, not
       per-user accounts with roles/audit trails.
-- [ ] Add basic rate limiting to the public API.
+- [x] ~~Add basic rate limiting to the public API~~ — **done this pass**:
+      an in-memory per-IP fixed-window limiter now applies to every
+      `/api/*` route (default 120 req/IP/60s), configurable via
+      `RATE_LIMIT_MAX` / `RATE_LIMIT_WINDOW_MS`. It is **per-process, not
+      distributed** — if you ever run multiple PulseBoard instances behind
+      a load balancer, each enforces its own limit independently. Fine for
+      the single-instance deployment this MVP targets; revisit with a
+      shared store (e.g. Redis) if that changes.
 
 ## 2. Domain & hosting (human only — not done by this pipeline)
 
@@ -75,7 +111,10 @@ published to a public domain or social account.
       step** — never automate pointing a real domain at infrastructure
       without explicit human action and review.
 - [ ] Set the `PORT` env var if the host requires a specific port, and
-      `CHECK_INTERVAL_MS` if a different check cadence is wanted.
+      `CHECK_INTERVAL_MS` if a different global check cadence is wanted
+      (individual monitors can also override it via `intervalMs`, set
+      per-monitor through the dashboard or the API — see README.md
+      "Per-monitor check interval").
 - [ ] Attach a **persistent volume/disk** at `/app/data` on the chosen host
       (e.g. a Render Disk, a Fly.io Volume) — without one, the container's
       filesystem (and therefore `data/pulseboard.json`) is wiped on every
@@ -84,6 +123,16 @@ published to a public domain or social account.
 - [ ] Set real, non-default `ADMIN_USER`/`ADMIN_PASSWORD` env vars on the
       host before exposing the dashboard — it has **no auth at all** unless
       both are explicitly set.
+- [ ] (Optional) Tune `RATE_LIMIT_MAX`/`RATE_LIMIT_WINDOW_MS` for the
+      expected traffic level of the public status page once it's actually
+      shared with customers; the defaults (120 req/IP/60s) are a
+      reasonable single-instance starting point, not a tuned production
+      value.
+- [ ] (Optional) If using webhook notifications, no extra host
+      configuration is needed — it's a plain outbound HTTPS POST from the
+      PulseBoard process itself, so just make sure the host's outbound
+      network allows HTTPS to wherever the webhook URLs point (e.g. Slack/
+      Discord).
 
 ## 3. Payments (human only — currently fully mocked)
 
@@ -118,10 +167,12 @@ published to a public domain or social account.
 - `Dockerfile` — builds a production image (`node server/index.js`,
   port 3000, container healthcheck against `/api/status`, `VOLUME
   ["/app/data"]` for the persisted data file). See "0. Local build/test
-  confirmation" above for how it was verified this cycle (still not an
-  actual `docker build`, since no daemon is available here).
-- `.dockerignore` — excludes `node_modules`, tests, docs, and the local
-  `data/` directory from the image.
+  confirmation" above for how it was verified this cycle — the daemon now
+  runs here, but the base-image pull is blocked by this sandbox's network
+  policy, so it's still not a completed `docker build` end to end.
+- `.dockerignore` — excludes `node_modules`, `tests`, `scripts`,
+  `screenshots`, docs, and the local `data/` directory from the image
+  (none of those are needed to run the production server).
 - `.github/workflows/ci.yml` — runs `npm test` on push/PR touching this
   project folder. This workflow will start running automatically once this
   branch/PR is on GitHub with Actions enabled for the repo — **that itself
