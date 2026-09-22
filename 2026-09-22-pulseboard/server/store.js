@@ -1,8 +1,15 @@
 'use strict';
 
-// In-memory data store for PulseBoard.
-// NOTE: All data lives only in process memory and is lost on restart.
-// This is intentional for the MVP (see README.md "Known limitations").
+// Data store for PulseBoard.
+//
+// State lives in memory (as before) but, when a `persistPath` is given, is
+// also mirrored to a local JSON file on disk (see server/persistence.js) so
+// monitors/checks/incidents/plan survive a server restart. With no
+// `persistPath` the store behaves exactly as the original in-memory-only
+// store (this is what the test suite uses by default, so tests stay fast
+// and isolated from the filesystem).
+
+const persistence = require('./persistence');
 
 const FREE_PLAN_MONITOR_LIMIT = 3;
 const MAX_CHECKS_PER_MONITOR = 50;
@@ -11,13 +18,41 @@ const MAX_INCIDENTS = 100;
 class ValidationError extends Error {}
 class PlanLimitError extends Error {}
 
-function createStore() {
+function createStore(options = {}) {
+  const persistPath = options.persistPath || null;
+
   let monitors = [];
   let checksByMonitor = new Map(); // monitorId -> array of check results, oldest first
   let incidents = [];
   let plan = 'free'; // 'free' | 'pro'
   let nextMonitorId = 1;
   let nextIncidentId = 1;
+
+  function persist() {
+    if (!persistPath) return;
+    persistence.saveSync(persistPath, {
+      monitors,
+      checksByMonitor: Array.from(checksByMonitor.entries()),
+      incidents,
+      plan,
+      nextMonitorId,
+      nextIncidentId,
+    });
+  }
+
+  function loadFromDisk() {
+    if (!persistPath) return;
+    const data = persistence.loadSync(persistPath);
+    if (!data) return;
+    monitors = Array.isArray(data.monitors) ? data.monitors : [];
+    checksByMonitor = new Map(Array.isArray(data.checksByMonitor) ? data.checksByMonitor : []);
+    incidents = Array.isArray(data.incidents) ? data.incidents : [];
+    plan = data.plan === 'pro' ? 'pro' : 'free';
+    nextMonitorId = Number.isInteger(data.nextMonitorId) ? data.nextMonitorId : 1;
+    nextIncidentId = Number.isInteger(data.nextIncidentId) ? data.nextIncidentId : 1;
+  }
+
+  loadFromDisk();
 
   function decorateMonitor(m) {
     const checks = checksByMonitor.get(m.id) || [];
@@ -73,6 +108,7 @@ function createStore() {
     };
     monitors.push(monitor);
     checksByMonitor.set(monitor.id, []);
+    persist();
     return decorateMonitor(monitor);
   }
 
@@ -81,6 +117,7 @@ function createStore() {
     if (idx === -1) return false;
     monitors.splice(idx, 1);
     checksByMonitor.delete(id);
+    persist();
     return true;
   }
 
@@ -110,6 +147,7 @@ function createStore() {
       incidents = incidents.slice(0, MAX_INCIDENTS);
     }
 
+    persist();
     return decorateMonitor(monitor);
   }
 
@@ -124,6 +162,7 @@ function createStore() {
   function setPlan(p) {
     if (p !== 'free' && p !== 'pro') throw new ValidationError('invalid plan');
     plan = p;
+    persist();
     return plan;
   }
 
@@ -134,6 +173,7 @@ function createStore() {
     plan = 'free';
     nextMonitorId = 1;
     nextIncidentId = 1;
+    persist();
   }
 
   return {
