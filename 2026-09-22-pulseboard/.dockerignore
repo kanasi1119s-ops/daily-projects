@@ -1,5 +1,7 @@
 node_modules
 tests
+scripts
+screenshots
 .github
 *.md
 npm-debug.log*
