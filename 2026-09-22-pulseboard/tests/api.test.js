@@ -113,6 +113,64 @@ test('GET /api/status aggregates overall status and hides internal ids', async (
   assert.equal(status2.body.incidents.length >= 1, true);
 });
 
+test('POST /api/monitors accepts optional webhookUrl and intervalMs', async () => {
+  const { app } = freshApp();
+  const res = await request(app)
+    .post('/api/monitors')
+    .send({ name: 'With extras', url: 'https://example.com', webhookUrl: 'https://hooks.example.com/x', intervalMs: 30000 });
+  assert.equal(res.status, 201);
+  assert.equal(res.body.webhookUrl, 'https://hooks.example.com/x');
+  assert.equal(res.body.intervalMs, 30000);
+});
+
+test('POST /api/monitors rejects an intervalMs that is too small (validation, 400)', async () => {
+  const { app } = freshApp();
+  const res = await request(app).post('/api/monitors').send({ name: 'A', url: 'https://a.example.com', intervalMs: 100 });
+  assert.equal(res.status, 400);
+});
+
+test('PATCH /api/monitors/:id updates fields and returns the updated monitor', async () => {
+  const { app } = freshApp();
+  const created = await request(app).post('/api/monitors').send({ name: 'A', url: 'https://a.example.com' });
+  const id = created.body.id;
+
+  const patched = await request(app)
+    .patch(`/api/monitors/${id}`)
+    .send({ webhookUrl: 'https://hooks.example.com/y', intervalMs: 10000 });
+  assert.equal(patched.status, 200);
+  assert.equal(patched.body.webhookUrl, 'https://hooks.example.com/y');
+  assert.equal(patched.body.intervalMs, 10000);
+
+  const list = await request(app).get('/api/monitors');
+  assert.equal(list.body.monitors[0].webhookUrl, 'https://hooks.example.com/y');
+});
+
+test('PATCH /api/monitors/:id 404s for an unknown id, 400s for invalid input', async () => {
+  const { app } = freshApp();
+  const missing = await request(app).patch('/api/monitors/999').send({ name: 'x' });
+  assert.equal(missing.status, 404);
+
+  const created = await request(app).post('/api/monitors').send({ name: 'A', url: 'https://a.example.com' });
+  const invalid = await request(app).patch(`/api/monitors/${created.body.id}`).send({ url: 'not-a-url' });
+  assert.equal(invalid.status, 400);
+});
+
+test('GET /api/status includes uptimeStats for long-term uptime (24h/7d/30d/all-time)', async (t) => {
+  const { app } = freshApp();
+  const demo = await startDemoTargetServer(0);
+  t.after(() => demo.close());
+  const { port } = demo.address();
+
+  const created = await request(app).post('/api/monitors').send({ name: 'Healthy', url: `http://127.0.0.1:${port}/ok` });
+  await request(app).post(`/api/monitors/${created.body.id}/check`);
+
+  const status = await request(app).get('/api/status');
+  assert.equal(status.status, 200);
+  assert.ok(status.body.monitors[0].uptimeStats);
+  assert.equal(status.body.monitors[0].uptimeStats.allTime.upChecks, 1);
+  assert.equal(status.body.monitors[0].uptimeStats.last24h.pct, 100);
+});
+
 test('GET /api/incidents starts empty and records a down incident after a failing check', async (t) => {
   const { app } = freshApp();
   const demo = await startDemoTargetServer(0);

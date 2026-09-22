@@ -4,7 +4,8 @@ const express = require('express');
 const path = require('path');
 const crypto = require('crypto');
 const { createStore, ValidationError, PlanLimitError } = require('./store');
-const { checkAllMonitors, checkUrl } = require('./checker');
+const { checkAllMonitors, checkMonitorAndNotify } = require('./checker');
+const { createRateLimiter } = require('./rateLimit');
 
 // --- Admin Basic Auth (optional) ---
 // Protects the admin dashboard (/ , /index.html) and every admin API route
@@ -56,6 +57,14 @@ function createApp(store = createStore(), options = {}) {
   const requireAdminAuth = createAdminAuthMiddleware(options.adminAuth);
 
   app.use(express.json());
+
+  // Simple in-memory per-IP rate limit on the API (public status endpoints
+  // included) — see server/rateLimit.js and README.md/DEPLOYMENT.md for the
+  // defaults and env vars. Each app/store instance gets its own limiter
+  // state, so tests (which create a fresh app per test) never share counts.
+  const rateLimit = createRateLimiter(options.rateLimit);
+  app.use('/api/', rateLimit);
+
   // `index: false` so express.static does NOT auto-serve public/index.html
   // (the admin dashboard) for GET / — that's handled by the explicit,
   // auth-protected route below instead. Every other static file (the
@@ -87,6 +96,17 @@ function createApp(store = createStore(), options = {}) {
     }
   });
 
+  app.patch('/api/monitors/:id', requireAdminAuth, (req, res) => {
+    const id = Number(req.params.id);
+    try {
+      const updated = store.updateMonitor(id, req.body || {});
+      if (!updated) return res.status(404).json({ error: 'monitor not found' });
+      res.json(updated);
+    } catch (err) {
+      handleError(err, res);
+    }
+  });
+
   app.delete('/api/monitors/:id', requireAdminAuth, (req, res) => {
     const id = Number(req.params.id);
     const removed = store.removeMonitor(id);
@@ -96,10 +116,9 @@ function createApp(store = createStore(), options = {}) {
 
   app.post('/api/monitors/:id/check', requireAdminAuth, async (req, res) => {
     const id = Number(req.params.id);
-    const monitor = store.getRawMonitor(id);
+    const monitor = store.getMonitor(id);
     if (!monitor) return res.status(404).json({ error: 'monitor not found' });
-    const result = await checkUrl(monitor.url);
-    const updated = store.recordCheck(id, result);
+    const { updated } = await checkMonitorAndNotify(store, monitor, options.checkerOpts);
     res.json(updated);
   });
 
@@ -122,6 +141,7 @@ function createApp(store = createStore(), options = {}) {
         name: m.name,
         status: m.status,
         uptimePct: m.uptimePct,
+        uptimeStats: m.uptimeStats,
         lastCheckedAt: m.lastCheckedAt,
       })),
       incidents: store.listIncidents().slice(0, 10),

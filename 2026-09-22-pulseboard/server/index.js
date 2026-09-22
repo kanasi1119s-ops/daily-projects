@@ -3,11 +3,21 @@
 const path = require('path');
 const { createApp } = require('./app');
 const { createStore } = require('./store');
-const { checkAllMonitors } = require('./checker');
+const { checkAllMonitors, checkDueMonitors } = require('./checker');
 const { startDemoTargetServer } = require('./demo-target');
+const { DEFAULT_WINDOW_MS: RATE_LIMIT_DEFAULT_WINDOW_MS, DEFAULT_MAX: RATE_LIMIT_DEFAULT_MAX } = require('./rateLimit');
 
 const PORT = process.env.PORT || 3000;
 const CHECK_INTERVAL_MS = Number(process.env.CHECK_INTERVAL_MS) || 15000;
+// Public API rate limiting (in-memory, per-IP, fixed window). See
+// README.md/DEPLOYMENT.md "Rate limiting" for details and defaults.
+const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS) || RATE_LIMIT_DEFAULT_WINDOW_MS;
+const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX) || RATE_LIMIT_DEFAULT_MAX;
+// The scheduler "tick" is how often we check which monitors are due, so
+// that a per-monitor intervalMs override shorter than CHECK_INTERVAL_MS is
+// actually honored without spawning one timer per monitor. Never faster
+// than every 1s, never slower than the global interval itself.
+const SCHEDULER_TICK_MS = Math.max(1000, Math.min(CHECK_INTERVAL_MS, 5000));
 // Local, file-based persistence — a single JSON file on disk, no external
 // database or cloud service. Override with DATA_FILE if needed; set
 // PERSIST=0 to run fully in-memory (e.g. for a throwaway demo).
@@ -22,7 +32,12 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || null;
 
 async function main() {
   const store = createStore({ persistPath: DATA_FILE });
-  const { app } = createApp(store, { adminAuth: { user: ADMIN_USER, pass: ADMIN_PASSWORD } });
+  const { app } = createApp(store, {
+    adminAuth: { user: ADMIN_USER, pass: ADMIN_PASSWORD },
+    rateLimit: { windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX },
+  });
+
+  console.log(`Rate limit: ${RATE_LIMIT_MAX} requests / ${RATE_LIMIT_WINDOW_MS}ms per IP on /api/*`); // eslint-disable-line no-console
 
   if (DATA_FILE) {
     console.log(`Persistence: loading/saving state at ${DATA_FILE}`); // eslint-disable-line no-console
@@ -60,16 +75,29 @@ async function main() {
     }
   }
 
-  async function runChecks() {
+  // First cycle checks every monitor immediately (so the dashboard is never
+  // stuck on "pending" right after startup); after that, a faster scheduler
+  // tick only checks whichever monitors are actually due, honoring each
+  // monitor's own intervalMs override when it has one (see
+  // server/checker.js checkDueMonitors / isDue).
+  async function runAllChecksOnce() {
     try {
       await checkAllMonitors(store);
+    } catch (err) {
+      console.error('Initial check cycle failed:', err); // eslint-disable-line no-console
+    }
+  }
+
+  async function runDueChecks() {
+    try {
+      await checkDueMonitors(store, { defaultIntervalMs: CHECK_INTERVAL_MS });
     } catch (err) {
       console.error('Check cycle failed:', err); // eslint-disable-line no-console
     }
   }
 
-  await runChecks();
-  const timer = setInterval(runChecks, CHECK_INTERVAL_MS);
+  await runAllChecksOnce();
+  const timer = setInterval(runDueChecks, SCHEDULER_TICK_MS);
   timer.unref();
 
   app.listen(PORT, () => {

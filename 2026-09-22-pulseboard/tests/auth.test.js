@@ -72,6 +72,24 @@ test('with adminAuth configured, GET / (dashboard) requires credentials', async 
   assert.match(authed.text, /PulseBoard/);
 });
 
+test('with adminAuth configured, PATCH /api/monitors/:id (edit) is protected', async () => {
+  const { app } = createApp(createStore(), { adminAuth: { user: 'admin', pass: 'secret' } });
+  const created = await request(app)
+    .post('/api/monitors')
+    .set('Authorization', basicAuthHeader('admin', 'secret'))
+    .send({ name: 'A', url: 'https://a.example.com' });
+
+  const unauth = await request(app).patch(`/api/monitors/${created.body.id}`).send({ intervalMs: 10000 });
+  assert.equal(unauth.status, 401);
+
+  const authed = await request(app)
+    .patch(`/api/monitors/${created.body.id}`)
+    .set('Authorization', basicAuthHeader('admin', 'secret'))
+    .send({ intervalMs: 10000 });
+  assert.equal(authed.status, 200);
+  assert.equal(authed.body.intervalMs, 10000);
+});
+
 test('with adminAuth configured, the public status page and API stay reachable with no credentials', async () => {
   const { app } = createApp(createStore(), { adminAuth: { user: 'admin', pass: 'secret' } });
 
