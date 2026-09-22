@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - "2026-09-22-pulseboard/**"
+  pull_request:
+    paths:
+      - "2026-09-22-pulseboard/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 2026-09-22-pulseboard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: 2026-09-22-pulseboard/package-lock.json
+      - run: npm ci
+      - run: npm test
