@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvoiceLite - 見積書・請求書ジェネレーター</title>
+<meta name="description" content="登録不要・サーバー保存なしで使える見積書・請求書ジェネレーター。インボイス制度に対応し、ブラウザだけでPDF出力できます。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="app-header no-print">
+  <h1>InvoiceLite</h1>
+  <p>登録不要・データはブラウザの外に出ません。見積書・請求書をその場で作成してPDF保存。</p>
+</header>
+
+<main class="layout">
+  <section class="editor no-print">
+    <div class="field-group">
+      <label>書類種別</label>
+      <select id="docType">
+        <option value="見積書">見積書</option>
+        <option value="請求書">請求書</option>
+      </select>
+    </div>
+
+    <fieldset>
+      <legend>発行者情報（自社）</legend>
+      <label>会社名・屋号<input id="issuerName" type="text" placeholder="株式会社サンプル / 山田太郎"></label>
+      <label>登録番号（インボイス）<input id="issuerRegNo" type="text" placeholder="T1234567890123"></label>
+      <label>住所<input id="issuerAddress" type="text" placeholder="東京都〇〇区..."></label>
+      <label>連絡先（電話・メール）<input id="issuerContact" type="text" placeholder="03-xxxx-xxxx / mail@example.com"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>宛先</legend>
+      <label>宛先名<input id="clientName" type="text" placeholder="〇〇株式会社"></label>
+      <label>敬称
+        <select id="clientHonorific">
+          <option value="御中">御中</option>
+          <option value="様">様</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>書類情報</legend>
+      <label>書類番号<input id="docNo" type="text" placeholder="INV-2026-0001"></label>
+      <label>発行日<input id="issueDate" type="date"></label>
+      <label id="dueDateLabel">支払期限<input id="dueDate" type="date"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>品目</legend>
+      <table class="item-editor" id="itemEditor">
+        <thead>
+          <tr><th>品目</th><th>数量</th><th>単位</th><th>単価</th><th>税率</th><th></th></tr>
+        </thead>
+        <tbody id="itemRows"></tbody>
+      </table>
+      <button type="button" id="addRow">+ 品目を追加</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>備考</legend>
+      <textarea id="notes" rows="3" placeholder="振込先口座、納期などを記載"></textarea>
+    </fieldset>
+
+    <div class="actions">
+      <button type="button" id="printBtn" class="primary">PDFとして保存（印刷）</button>
+      <button type="button" id="resetBtn">新規作成</button>
+    </div>
+    <p class="privacy-note">※ 入力内容はこの端末のブラウザ内（localStorage）にのみ保存され、外部サーバーには送信されません。共有端末で利用した場合は「新規作成」ボタンで入力内容を消去してください。</p>
+    <p class="privacy-note">※ 本ツールは書類作成の補助であり、税務・法務上の助言を行うものではありません。</p>
+  </section>
+
+  <section class="preview" id="preview">
+    <div class="doc" id="doc">
+      <h2 class="doc-title" id="pDocType">見積書</h2>
+      <div class="doc-top">
+        <div class="doc-to">
+          <p id="pClientLine">____　御中</p>
+        </div>
+        <div class="doc-meta">
+          <p>書類番号：<span id="pDocNo"></span></p>
+          <p>発行日：<span id="pIssueDate"></span></p>
+          <p id="pDueDateWrap">支払期限：<span id="pDueDate"></span></p>
+        </div>
+      </div>
+
+      <div class="doc-issuer">
+        <p id="pIssuerName"></p>
+        <p id="pIssuerRegNo"></p>
+        <p id="pIssuerAddress"></p>
+        <p id="pIssuerContact"></p>
+      </div>
+
+      <table class="doc-items">
+        <thead>
+          <tr><th>品目</th><th>数量</th><th>単位</th><th>単価</th><th>税率</th><th>金額</th></tr>
+        </thead>
+        <tbody id="pItemRows"></tbody>
+      </table>
+
+      <div class="doc-totals">
+        <div><span>小計</span><span id="pSubtotal">¥0</span></div>
+        <div id="pTax10Row"><span>消費税（10%対象）</span><span id="pTax10">¥0</span></div>
+        <div id="pTax8Row"><span>消費税（8%対象）</span><span id="pTax8">¥0</span></div>
+        <div class="total"><span>合計</span><span id="pTotal">¥0</span></div>
+      </div>
+
+      <div class="doc-notes">
+        <p><strong>備考</strong></p>
+        <p id="pNotes"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
