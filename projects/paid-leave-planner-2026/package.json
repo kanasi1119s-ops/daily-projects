@@ -1,0 +1,10 @@
+{
+  "name": "paid-leave-planner-2026",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "有給休暇消化プランナー: 祝日データから連休を最大化する有給取得プランを提案するMVP",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}
