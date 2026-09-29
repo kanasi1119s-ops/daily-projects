@@ -17,8 +17,12 @@ export const DEEMED_RATIO = { 1: 0.9, 2: 0.8, 3: 0.7, 4: 0.6, 5: 0.5, 6: 0.4 };
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
+const MAX_AMOUNT = 1e13; // 10兆円。浮動小数の精度劣化を防ぐ上限
+
 function assertAmount(n, name) {
-  if (!Number.isFinite(n) || n < 0) throw new RangeError(`${name}は0以上の数値で指定してください`);
+  if (!Number.isInteger(n) || n < 0 || n > MAX_AMOUNT) {
+    throw new RangeError(`${name}は0以上10兆円以下の整数(円)で指定してください`);
+  }
 }
 
 /** 取引日(YYYY-MM-DD)から経過措置の控除割合を返す。範囲外は 0(または適用前は 1)。 */

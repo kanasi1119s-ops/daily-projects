@@ -71,3 +71,9 @@ test("入力検証", () => {
   assert.throws(() => compareMethods({ taxYear: 2026, unregRatio: 2 }), RangeError);
   assert.throws(() => compareMethods({ taxYear: "abc" }), RangeError);
 });
+
+test("小数・巨大値は拒否", () => {
+  assert.throws(() => nationalTaxFromGross(100.5, 10), RangeError);
+  assert.throws(() => nationalTaxFromGross(1e14, 10), RangeError);
+  assert.throws(() => compareMethods({ taxYear: 2026, sales10: 0.5 }), RangeError);
+});
