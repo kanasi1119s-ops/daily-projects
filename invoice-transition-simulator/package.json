@@ -1,0 +1,12 @@
+{
+  "name": "invoice-transition-simulator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "インボイス経過措置・2割/3割特例 消費税シミュレーター(静的サイト)",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/serve.mjs"
+  }
+}
