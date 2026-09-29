@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   transitionalRatio, nationalTaxFromGross, unregisteredPurchase, withLocal,
-  availableSpecials, compareMethods,
+  availableSpecials, compareMethods, salesTaxFromGross,
 } from "../src/logic.js";
 
 test("経過措置の境界日", () => {
@@ -36,7 +36,9 @@ test("免税事業者からの仕入れ", () => {
 });
 
 test("地方消費税加算", () => {
-  assert.equal(withLocal(7800), 7800 + 2200);
+  assert.equal(withLocal(7800), 10000); // 7800 + 7800×22/78(=2200)
+  assert.equal(withLocal(7850), 10000); // 国税7,800(100円未満切捨て) + 2,200
+  assert.equal(withLocal(390000), 500000);
 });
 
 test("特例の利用可能年", () => {
@@ -76,4 +78,10 @@ test("小数・巨大値は拒否", () => {
   assert.throws(() => nationalTaxFromGross(100.5, 10), RangeError);
   assert.throws(() => nationalTaxFromGross(1e14, 10), RangeError);
   assert.throws(() => compareMethods({ taxYear: 2026, sales10: 0.5 }), RangeError);
+});
+
+test("売上税額: 税抜→千円未満切捨て→税率", () => {
+  assert.equal(salesTaxFromGross(5_500_000, 10), 390000);
+  assert.equal(salesTaxFromGross(5_599_999, 10), 397020); // 税抜5,090,908→5,090,000×7.8%
+  assert.equal(salesTaxFromGross(1_080_000, 8), 62400); // 税抜1,000,000×6.24%
 });

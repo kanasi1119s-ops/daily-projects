@@ -2,7 +2,6 @@
 // 注意: 税制は令和8年度税制改正大綱ベース。公式情報での確認が必要。
 
 export const NATIONAL_RATE = { 10: 7.8, 8: 6.24 }; // 国税分(%)
-export const LOCAL_RATIO = 22 / 78; // 地方消費税 = 国税 × 22/78
 
 // 免税事業者等からの仕入税額控除の経過措置(取引日で判定)
 export const TRANSITIONAL_SCHEDULE = [
@@ -53,9 +52,20 @@ export function unregisteredPurchase(gross, rate, dateStr) {
   return { tax, ratio, deductible, nonDeductible: tax - deductible };
 }
 
-/** 国税分に地方消費税を加えた合計(地方分は切捨て)。 */
+/** 売上側: 税込売上→課税標準額(税抜・1,000円未満切捨て)→国税分の売上税額。 */
+export function salesTaxFromGross(gross, rate = 10) {
+  assertAmount(gross, "金額");
+  if (NATIONAL_RATE[rate] === undefined) throw new RangeError("税率は10または8を指定してください");
+  const base = Math.floor(Math.floor((gross * 100) / (100 + rate)) / 1000) * 1000;
+  return Math.floor((base * NATIONAL_RATE[rate]) / 100);
+}
+
+const floor100 = (n) => Math.floor(n / 100) * 100;
+
+/** 国税の納付税額(100円未満切捨て)に地方消費税(国税×22/78、100円未満切捨て)を加えた合計。 */
 export function withLocal(national) {
-  return national + Math.floor(national * LOCAL_RATIO);
+  const n = floor100(national);
+  return n + floor100(Math.floor((n * 22) / 78));
 }
 
 /** 申告年分ごとに利用可能な特例。 */
@@ -85,7 +95,7 @@ export function compareMethods(input) {
   if (!(unregRatio >= 0 && unregRatio <= 1)) throw new RangeError("控除割合は0〜1で指定してください");
   if (!(businessType in DEEMED_RATIO)) throw new RangeError("事業区分は1〜6で指定してください");
 
-  const salesTax = nationalTaxFromGross(sales10, 10) + nationalTaxFromGross(sales8, 8);
+  const salesTax = salesTaxFromGross(sales10, 10) + salesTaxFromGross(sales8, 8);
   const inputTax =
     nationalTaxFromGross(purchases10, 10) + nationalTaxFromGross(purchases8, 8) +
     Math.floor(
@@ -95,7 +105,7 @@ export function compareMethods(input) {
   const avail = availableSpecials(taxYear);
   const results = [];
   const push = (key, label, national) =>
-    results.push({ key, label, national, total: withLocal(national) });
+    results.push({ key, label, national: floor100(national), total: withLocal(national) });
 
   push("honsoku", "本則課税", Math.max(0, salesTax - inputTax));
   push("kani", "簡易課税", Math.floor(salesTax * (1 - DEEMED_RATIO[businessType])));
