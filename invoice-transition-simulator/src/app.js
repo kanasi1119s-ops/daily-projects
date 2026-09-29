@@ -58,6 +58,7 @@ function renderB() {
     out.appendChild(table);
     const a = availableSpecials(year);
     if (!a.niwari && !a.sanwari) text(out, "p", "この年分は2割・3割特例の対象外です(制度は今後変更される可能性があります)。");
+    if (a.niwari || a.sanwari) text(out, "p", "※2割/3割特例は適用要件(免税事業者から適格請求書発行事業者になった方など)を満たす場合のみ選択できます。本ツールは要件を判定しません。", "lead");
     text(out, "p", `課税売上に係る消費税額(国税): ${yen(r.salesTax)} / 仕入税額控除額: ${yen(r.inputTax)}`, "lead");
   } catch (e) {
     text(out, "p", e.message, "err");
