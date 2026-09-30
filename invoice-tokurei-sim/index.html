@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>インボイス特例シミュレーター｜2割・3割・簡易・本則を比較</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%232457d6%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27%3E%C2%A5%3C/text%3E%3C/svg%3E" />
+  <meta name="description" content="2割特例終了後の消費税、どの方法が有利か試算。本則課税・簡易課税・2割特例・3割特例の納付額を比較します（試算専用）。" />
+</head>
+<body>
+  <header class="hero">
+    <h1>インボイス特例シミュレーター</h1>
+    <p>2割特例は令和8年9月30日を含む課税期間で終了。本則・簡易・2割・3割の納付額を並べて試算します。</p>
+    <p class="badge">入力内容はブラウザ内でのみ計算され、送信・保存されません</p>
+  </header>
+
+  <main>
+    <form id="form" class="card" novalidate>
+      <h2>1. 事業者の情報</h2>
+      <div class="grid">
+        <label>事業者区分
+          <select id="taxpayer">
+            <option value="individual">個人事業主（課税期間＝暦年）</option>
+            <option value="corporation">法人（課税期間を指定）</option>
+          </select>
+        </label>
+        <label id="yearWrap">対象年
+          <select id="year">
+            <option>2026</option><option>2027</option><option>2028</option><option>2029</option>
+          </select>
+        </label>
+        <label class="corp">課税期間 開始日<input type="date" id="periodStart" value="2026-04-01" /></label>
+        <label class="corp">課税期間 終了日<input type="date" id="periodEnd" value="2027-03-31" /></label>
+        <label>事業区分（簡易課税用）
+          <select id="businessType"></select>
+        </label>
+        <label>基準期間（2年前）の課税売上高（税抜・円）
+          <input type="number" id="baseSales" min="0" step="1" inputmode="numeric" value="4000000" />
+        </label>
+      </div>
+      <label class="check"><input type="checkbox" id="registeredFromExempt" checked />
+        免税事業者だったが、インボイス登録で課税事業者になった（2割・3割特例の要件）</label>
+
+      <h2>2. 課税期間の金額（税抜・円）</h2>
+      <div class="grid">
+        <label>課税売上（標準税率10%）<input type="number" id="salesStd" min="0" step="1" inputmode="numeric" value="5000000" /></label>
+        <label>課税売上（軽減税率8%）<input type="number" id="salesReduced" min="0" step="1" inputmode="numeric" value="0" /></label>
+        <label>課税仕入（登録事業者から・10%）<input type="number" id="purchasesStd" min="0" step="1" inputmode="numeric" value="1000000" /></label>
+        <label>課税仕入（登録事業者から・8%）<input type="number" id="purchasesReduced" min="0" step="1" inputmode="numeric" value="0" /></label>
+        <label>課税仕入（免税事業者等から・10%）<input type="number" id="exemptPurchasesStd" min="0" step="1" inputmode="numeric" value="0" /></label>
+        <label>課税仕入（免税事業者等から・8%）<input type="number" id="exemptPurchasesReduced" min="0" step="1" inputmode="numeric" value="0" /></label>
+        <label>免税事業者等からの仕入の控除割合
+          <select id="exemptRate">
+            <option value="auto">課税期間の日数で按分して自動（概算）</option>
+            <option value="1">100%</option><option value="0.8">80%</option><option value="0.7">70%</option>
+            <option value="0.5">50%</option><option value="0.3">30%</option><option value="0">0%</option>
+          </select>
+        </label>
+      </div>
+      <p id="rateHint" class="hint"></p>
+      <p id="errors" class="error" role="alert"></p>
+    </form>
+
+    <section class="card" aria-live="polite">
+      <h2>3. 試算結果</h2>
+      <p id="summary" class="summary"></p>
+      <div id="results"></div>
+    </section>
+
+    <section class="card disclaimer">
+      <h2>ご利用にあたって（必ずお読みください）</h2>
+      <ul>
+        <li>本ツールは一般的な情報提供と概算のための試算であり、税務・法律上の助言ではありません。実際の申告・制度選択は税理士または税務署にご相談ください。</li>
+        <li>3割特例・免税事業者からの仕入の控除割合（70%→50%→30%）は令和8年度税制改正に基づく内容です。適用条件・期間は公布された法令と国税庁の最新情報で必ずご確認ください。</li>
+        <li>端数処理、事業区分の混在、貸倒れ、課税売上割合、地方消費税の内訳などは考慮していません。結果の正確性・有利不利は保証されません。</li>
+        <li>簡易課税は事前の届出が必要です。届出期限を過ぎた場合は選択できません（2割特例終了後の特例の有無は国税庁の案内で確認してください）。</li>
+      </ul>
+    </section>
+  </main>
+  <footer><small>© インボイス特例シミュレーター（試算専用）</small></footer>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
