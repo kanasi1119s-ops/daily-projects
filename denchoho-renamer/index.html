@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>電帳法ファイル名ヘルパー</title>
+<meta name="description" content="領収書・請求書のファイル名を日付_取引先_金額に一括変換。ファイルは端末外に送信されません。">
+<style>
+:root{--bg:#f7f8fa;--fg:#1d2733;--card:#fff;--line:#d8dee6;--accent:#1a6fd1;--err:#c0392b}
+@media (prefers-color-scheme:dark){:root{--bg:#14181d;--fg:#e6ebf0;--card:#1d242c;--line:#33404d;--accent:#5aa2f0;--err:#ff7b6b}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,sans-serif}
+main{max-width:960px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem}.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;margin:12px 0}
+#drop{border:2px dashed var(--line);text-align:center;padding:28px;cursor:pointer}#drop.over{border-color:var(--accent)}
+table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}
+.tbl{overflow-x:auto}input,select{width:100%;min-width:90px;padding:6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--fg);font:inherit}
+button{padding:8px 14px;border:0;border-radius:6px;background:var(--accent);color:#fff;font:inherit;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
+button.sub{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.err{color:var(--err);font-size:.85rem}.name{font-family:ui-monospace,monospace;font-size:.85rem;word-break:break-all}.note{font-size:.85rem;opacity:.8}
+</style>
+</head>
+<body>
+<main>
+<h1>電帳法ファイル名ヘルパー</h1>
+<p class="note">電子取引で受け取った領収書・請求書に「取引年月日・取引先・金額」で検索できる名前を付けます。ファイルはこのブラウザの中だけで処理され、外部へ送信されません。</p>
+<div id="drop" class="card" tabindex="0" role="button" aria-label="ファイルを選択">ここにファイルをドロップ、またはクリックして選択<input id="picker" type="file" multiple hidden></div>
+<div class="card tbl" id="tablewrap" hidden>
+<table><thead><tr><th>元ファイル</th><th>取引年月日</th><th>取引先</th><th>金額(円)</th><th>種別</th><th>新ファイル名</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+</div>
+<div class="card" id="actions" hidden>
+<button id="zip" disabled>ZIP(リネーム済み+索引CSV)をダウンロード</button>
+<button id="clear" class="sub">すべてクリア</button>
+<p class="note">※ 本ツールは法的助言ではありません。電子帳簿保存法の要件(訂正削除の防止措置・事務処理規程等)の最終確認は税理士または税務署にご相談ください。</p>
+</div>
+</main>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
