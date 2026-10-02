@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>適格請求書チェッカー</title>
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+<header class="no-print">
+  <h1>適格請求書チェッカー</h1>
+  <p>入力内容はお使いのブラウザ内だけで処理され、外部に送信されません。※本ツールは税務・法律上の助言ではありません。</p>
+</header>
+<main>
+  <form id="form" class="no-print" autocomplete="off">
+    <fieldset><legend>発行者</legend>
+      <label>氏名・名称<input name="issuerName"></label>
+      <label>登録番号（T+13桁）<input name="registrationNumber" placeholder="T1234567890123"></label>
+    </fieldset>
+    <fieldset><legend>請求内容</legend>
+      <label>宛名<input name="recipientName"></label>
+      <label>取引年月日<input type="date" name="date"></label>
+      <label>消費税の端数処理
+        <select name="rounding"><option value="floor">切り捨て</option><option value="round">四捨五入</option><option value="ceil">切り上げ</option></select>
+      </label>
+    </fieldset>
+    <fieldset><legend>品目（税抜）</legend>
+      <div id="items"></div>
+      <button type="button" id="addItem">＋ 品目を追加</button>
+    </fieldset>
+    <button type="button" id="print">PDF保存 / 印刷</button>
+  </form>
+  <section>
+    <div id="messages" class="no-print" aria-live="polite"></div>
+    <div id="preview"></div>
+  </section>
+</main>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
