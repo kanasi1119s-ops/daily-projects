@@ -53,3 +53,10 @@ test("検証: 正常", () => {
   });
   assert.equal(r.filter((x) => x.level === "error").length, 0);
 });
+
+test("浮動小数点の誤差で税額がずれない", () => {
+  for (const price of [100, 1000, 58, 290, 1980]) {
+    const r = calcInvoice([{ name: "a", qty: 1, unitPrice: price, rate: 10 }], "floor");
+    assert.equal(r.byRate[10].tax, Math.floor(price / 10));
+  }
+});

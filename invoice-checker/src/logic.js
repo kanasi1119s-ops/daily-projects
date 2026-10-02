@@ -76,6 +76,6 @@ export function validateInvoice(inv) {
     if (![8, 10].includes(Number(i.rate))) err(`品目${idx + 1}: 税率は8%か10%を選択してください`);
   }
   if (valid.some((i) => Number(i.rate) === 8))
-    warn("軽減税率(8%)の品目がある場合、「※」等で軽減税率対象であることの明示が必要です（本ツールは※を自動付与します）");
+    out.push({ level: "info", msg: "軽減税率(8%)品目には「※」を自動付与し、軽減税率対象である旨を請求書に記載します" });
   return out;
 }

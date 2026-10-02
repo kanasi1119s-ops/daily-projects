@@ -58,12 +58,12 @@ function render() {
     .join("");
   $("#preview").innerHTML = `
     <h2>請求書</h2>
-    <p>${esc(inv.recipientName)} 御中<br>取引年月日: ${esc(inv.date)}</p>
+    <p>${inv.recipientName?.trim() ? esc(inv.recipientName) + " 御中" : ""}<br>取引年月日: ${esc(inv.date)}</p>
     <p>${esc(inv.issuerName)}<br>登録番号: ${esc(inv.registrationNumber)}</p>
     <table><thead><tr><th>品名</th><th>数量</th><th>単価(税抜)</th><th>税率</th><th>金額(税抜)</th></tr></thead><tbody>${rows}</tbody></table>
     <table><tbody>${sums}</tbody></table>
     <p><strong>合計(税込): ${yen(calc.total)}</strong></p>
-    <p style="font-size:.8rem">※は軽減税率(8%)対象</p>`;
+    ${calc.byRate[8].subtotal > 0 ? '<p style="font-size:.8rem">※は軽減税率(8%)対象</p>' : ""}`;
 }
 
 form.addEventListener("input", render);

@@ -17,3 +17,5 @@ button{padding:8px 12px;font-size:.95rem;cursor:pointer}
 #preview th,#preview td{border:1px solid #999;padding:4px 8px;font-size:.9rem}
 #preview td.n{text-align:right}
 @media print{.no-print{display:none!important}body{background:#fff}main{display:block;padding:0}#preview{border:0;padding:0}}
+.msg.info{background:#e8f0fb;color:#1d3f73}
+@media(max-width:500px){.row{grid-template-columns:1fr 1fr 1fr}.row input:first-child{grid-column:1/-1}}
