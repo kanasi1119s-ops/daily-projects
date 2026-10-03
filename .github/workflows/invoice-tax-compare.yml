@@ -1,0 +1,19 @@
+name: invoice-tax-compare
+on:
+  push:
+    paths: ["2026-10-03-invoice-tax-compare/**"]
+  pull_request:
+    paths: ["2026-10-03-invoice-tax-compare/**"]
+defaults:
+  run:
+    working-directory: 2026-10-03-invoice-tax-compare
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: 2026-10-03-invoice-tax-compare/package-lock.json }
+      - run: npm ci
+      - run: npm test
+      - run: npm run build

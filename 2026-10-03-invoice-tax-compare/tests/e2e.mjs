@@ -1,0 +1,27 @@
+// 手動E2E: `npm run build && npx vite preview --port 4173` を起動した状態で `node tests/e2e.mjs`
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath: process.env.CHROMIUM ?? "/opt/pw-browsers/chromium" });
+const p = await b.newPage({ viewport: { width: 375, height: 800 } });
+const errs = [];
+p.on("pageerror", (e) => errs.push(String(e)));
+p.on("console", (m) => m.type() === "error" && errs.push(m.text()));
+await p.goto("http://localhost:4173/");
+const text = () => p.locator("#result").innerText();
+let t = await text();
+const check = (name, cond) => { console.log((cond ? "PASS " : "FAIL ") + name); if (!cond) process.exitCode = 1; };
+check("初期: 3割特例150,000円と最有利表示", t.includes("150,000 円") && t.includes("最も有利"));
+await p.selectOption("select[name=year]", "2026");
+t = await text();
+check("2026: 2割特例100,000円", t.includes("100,000 円"));
+check("2026: 3割特例は対象外", t.includes("令和9年・10年分のみ"));
+await p.uncheck("input[name=wasExempt]");
+t = await text();
+check("免税でない→特例対象外", t.includes("インボイス登録を機に"));
+await p.fill("input[name=sales]", "");
+t = await text();
+check("空入力でもNaNなし", !t.includes("NaN"));
+const overflow = await p.evaluate(() => document.documentElement.scrollWidth > innerWidth);
+check("モバイルで横スクロールなし", !overflow);
+if (errs.length) console.log(errs);
+check("コンソールエラーなし", errs.length === 0);
+await b.close();

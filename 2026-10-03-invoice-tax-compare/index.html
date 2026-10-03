@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>インボイス 消費税 方式かんたん比較（個人事業主向け）</title>
+  <meta name="description" content="原則課税・簡易課税・2割特例・3割特例の納付税額を並べて概算比較。入力データはブラウザ内だけで処理され、送信されません。" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctext y=%2724%27 font-size=%2724%27%3E%C2%A5%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <main>
+    <h1>消費税 方式かんたん比較</h1>
+    <p class="lead">個人事業主向け。令和8〜10年分の納付税額を、原則課税・簡易課税・2割/3割特例で並べて概算します。<br />入力内容はブラウザ内で計算され、外部へ送信・保存されません。</p>
+
+    <form id="form" autocomplete="off">
+      <label>対象年分
+        <select name="year">
+          <option value="2026">令和8年（2026年）分</option>
+          <option value="2027" selected>令和9年（2027年）分</option>
+          <option value="2028">令和10年（2028年）分</option>
+        </select>
+      </label>
+      <label>年間課税売上（税込・円）<input name="sales" type="number" min="0" inputmode="numeric" value="5500000" /></label>
+      <label>課税仕入れ・経費（適格請求書あり／税込・円）<input name="purchasesQualified" type="number" min="0" inputmode="numeric" value="1100000" /></label>
+      <label>課税仕入れ（免税事業者等から／税込・円）<input name="purchasesUnqualified" type="number" min="0" inputmode="numeric" value="0" /></label>
+      <label>事業区分（簡易課税）
+        <select name="businessType" id="bt"></select>
+      </label>
+      <label>基準期間（2年前）の課税売上高（円）<input name="baseSales" type="number" min="0" inputmode="numeric" value="3000000" /></label>
+      <label class="check"><input name="wasExempt" type="checkbox" checked /> インボイス登録を機に免税事業者から課税事業者になった</label>
+    </form>
+
+    <section aria-live="polite">
+      <h2>比較結果</h2>
+      <div id="result"></div>
+    </section>
+
+    <section class="notes">
+      <h2>前提・注意</h2>
+      <ul>
+        <li>標準税率10%のみ・税込入力の概算です（軽減税率8%、事業用/家事按分、端数処理の細部は未対応）。</li>
+        <li>免税事業者等からの仕入の経過措置は、仕入が月ごとに均等と仮定した加重平均です（令和8年: 80%→70%、令和10年: 70%→50%）。</li>
+        <li>簡易課税は事前の届出が必要です。適用可否・届出期限は必ず国税庁の最新情報で確認してください。</li>
+        <li>本ツールは一般的な情報提供であり、税務相談ではありません。申告内容は税理士または税務署にご確認ください。</li>
+      </ul>
+    </section>
+  </main>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
