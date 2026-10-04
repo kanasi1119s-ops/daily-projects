@@ -1,0 +1,16 @@
+:root{--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--line:#d9dee7;--accent:#1f6feb;--warn:#b42318}
+@media (prefers-color-scheme:dark){:root{--bg:#10141b;--fg:#e6e9ef;--card:#181e28;--line:#2b3442;--accent:#6ea8ff;--warn:#ff8a80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+header,main,footer{max-width:1100px;margin:0 auto;padding:0 16px}
+h1{font-size:1.5rem;margin:24px 0 4px}h2{font-size:1.1rem}
+section{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:16px 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+th,td{border-bottom:1px solid var(--line);padding:6px;text-align:left;white-space:nowrap}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+input,select,button{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+input[type=number]{width:9em}input[type=text]{width:9em}
+button{cursor:pointer}button:hover{border-color:var(--accent)}
+#err{color:var(--warn);min-height:1.5em}
+footer{font-size:.85rem;padding-bottom:32px}

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>インボイス経過措置 控除額シミュレーター</title>
+<meta name="description" content="免税事業者等からの仕入れの仕入税額控除(80%→70%→50%→30%)による実質負担増を試算する無料ツール。入力データは端末内で処理され送信されません。">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>インボイス経過措置 控除額シミュレーター</h1>
+  <p>未登録の事業者からの仕入れで、控除できない消費税がいくらになるかを試算します。入力内容はブラウザ内でのみ計算され、外部に送信されません。</p>
+</header>
+<main>
+  <section aria-labelledby="sch">
+    <h2 id="sch">控除率スケジュール</h2>
+    <table class="sched"><thead><tr><th>仕入れの時期</th><th>控除率</th></tr></thead>
+    <tbody id="schedBody"></tbody></table>
+  </section>
+  <section aria-labelledby="inp">
+    <h2 id="inp">仕入れ明細</h2>
+    <label>端数処理
+      <select id="rounding"><option value="floor">切り捨て</option><option value="round">四捨五入</option><option value="ceil">切り上げ</option></select>
+    </label>
+    <div class="scroll">
+    <table id="rows"><thead><tr><th>摘要</th><th>仕入日</th><th>金額(円)</th><th>金額区分</th><th>税率</th><th>仕入先</th><th>控除率</th><th>消費税額</th><th>控除可能</th><th>控除不可</th><th></th></tr></thead>
+    <tbody id="rowsBody"></tbody>
+    <tfoot><tr><th colspan="7">合計</th><td id="tTax"></td><td id="tDed"></td><td id="tNon"></td><td></td></tr></tfoot></table>
+    </div>
+    <p id="err" role="alert"></p>
+    <button id="add" type="button">行を追加</button>
+  </section>
+</main>
+<footer>
+  <p><strong>ご注意:</strong> 本ツールは一般的な試算を目的とした参考情報であり、税務・法律上の助言ではありません。実際の申告では、国税庁の最新情報を確認し、税理士等にご相談ください。2割特例/3割特例、少額特例、事業者の売上規模による適用制限などは本ツールでは考慮していません。</p>
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>
