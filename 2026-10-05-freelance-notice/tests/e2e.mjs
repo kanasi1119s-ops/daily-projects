@@ -1,0 +1,26 @@
+// 手動E2E: `npm run build && npx vite preview --port 4173` の後に `node tests/e2e.mjs`
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ executablePath: process.env.CHROMIUM ?? "/opt/pw-browsers/chromium" });
+const p = await b.newPage();
+const errs = []; p.on("pageerror", (e) => errs.push(e.message)); p.on("console", (m) => m.type() === "error" && errs.push(m.text()));
+await p.goto("http://localhost:4173/");
+const fail = [];
+const check = (n, c) => { console.log(c ? "PASS" : "FAIL", n); if (!c) fail.push(n); };
+check("初期は印刷ボタン無効", await p.locator("#print").isDisabled());
+check("検査日欄は非表示", !(await p.locator("#w-inspectionDate").isVisible()));
+const set = (n, v) => p.locator(`[name=${n}]`).fill(v);
+await set("clientName", "A社"); await set("freelancerName", "山田太郎"); await set("contractDate", "2026-10-01");
+await set("workDescription", "ロゴ制作"); await set("deliveryDate", "2026-10-20"); await set("deliveryPlace", "メール");
+await set("fee", "100000円"); await set("paymentDate", "2026-11-30");
+check("全入力でボタン有効", await p.locator("#copy").isEnabled());
+check("プレビューに本文", (await p.locator("#out").textContent()).includes("ロゴ制作"));
+await p.locator("[name=inspection]").check();
+check("検査ON→未記入エラー", (await p.locator("#issues").textContent()).includes("検査完了日"));
+check("検査日欄表示", await p.locator("#w-inspectionDate").isVisible());
+await p.locator("#receipt").fill("2026-10-01");
+check("60日超過表示", (await p.locator("#pay").textContent()).includes("超えて"));
+await p.locator("[name=paymentDate]").fill("2026-11-29");
+check("60日以内表示", (await p.locator("#pay").textContent()).includes("以内"));
+check("JSエラーなし", errs.length === 0);
+console.log(errs);
+await b.close(); process.exit(fail.length ? 1 : 0);

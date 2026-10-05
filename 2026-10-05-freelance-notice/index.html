@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="data:," />
+<title>フリーランス法 取引条件通知書メーカー</title>
+<meta name="description" content="フリーランス法第3条の明示事項の抜け漏れをチェックしながら、取引条件通知書を作成。入力内容はブラウザ内でのみ処理されます。" />
+<style>
+:root{--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--bd:#d9dee7;--ac:#2456d6;--err:#c0392b;--ok:#1e8449}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--fg:#e8ebf2;--card:#1b2030;--bd:#333b50;--ac:#6b9bff;--err:#ff7b6b;--ok:#52c27f}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--fg);line-height:1.6}
+main{max-width:960px;margin:0 auto;padding:16px}h1{font-size:1.4rem}h2{font-size:1.1rem;margin-top:0}
+.grid{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px}
+label{display:block;font-size:.9rem;margin-top:10px}input,textarea{width:100%;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--fg);font:inherit}
+input[type=checkbox]{width:auto}.err{color:var(--err);font-size:.85rem}.ok{color:var(--ok)}
+ul{padding-left:1.2em}pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:12px}
+button{background:var(--ac);color:#fff;border:0;border-radius:6px;padding:8px 14px;font:inherit;cursor:pointer;margin-right:8px}button:disabled{opacity:.5;cursor:not-allowed}
+.note{font-size:.8rem;opacity:.8}
+@media print{body *{visibility:hidden}#out,#out *{visibility:visible}#out{position:absolute;left:0;top:0;border:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>フリーランス法 取引条件通知書メーカー</h1>
+<p class="note">入力内容はブラウザ内で処理され、外部に送信されません。本ツールは法的助言ではありません。最終確認は公正取引委員会・厚生労働省の公表資料または専門家にご相談ください。</p>
+<div class="grid">
+<section class="card"><h2>1. 取引条件の入力</h2><form id="f" autocomplete="off"></form></section>
+<section class="card"><h2>2. 抜け漏れチェック</h2><div id="issues"></div>
+<h2 style="margin-top:20px">支払期日60日ルール確認</h2>
+<label>給付の受領日<input type="date" id="receipt" /></label><div id="pay" class="note"></div></section>
+</div>
+<section class="card" style="margin-top:16px"><h2>3. プレビュー</h2><pre id="out"></pre>
+<button id="copy">テキストをコピー</button><button id="print">印刷 / PDF保存</button> <span id="msg" class="note"></span></section>
+</main>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
