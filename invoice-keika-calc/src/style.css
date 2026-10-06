@@ -1,0 +1,26 @@
+:root{--bg:#fff;--fg:#1d2330;--mute:#5b6577;--line:#d7dce5;--acc:#0b5fff;--warn:#a85a00;--card:#f4f6fa}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--fg:#e8ebf2;--mute:#9aa3b5;--line:#2c3342;--acc:#6ea0ff;--warn:#ffb454;--card:#1a1f2a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+header,main,footer{max-width:960px;margin:0 auto;padding:0 16px}
+h1{font-size:1.5rem;margin:24px 0 4px}h2{font-size:1.15rem;margin:28px 0 8px}
+.lead,.hint{color:var(--mute)}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end}
+label{display:flex;flex-direction:column;font-size:.9rem;gap:4px}
+label.chk{flex-direction:row;align-items:center}
+input[type=text],input[type=number],input[type=date],select,textarea{font:inherit;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);width:100%}
+button{font:inherit;padding:8px 16px;border-radius:6px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer}
+button#clear,button.del{background:transparent;color:var(--acc)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:8px 0}
+.cards div{background:var(--card);padding:12px 16px;border-radius:8px}
+.cards span{display:block;font-size:.85rem;color:var(--mute)}.cards strong{font-size:1.4rem}
+.msg{min-height:1.5em;margin:6px 0;color:#c62828}.msg.warn{color:var(--warn)}
+footer{margin:32px auto;color:var(--mute);font-size:.85rem}
+#result{min-width:720px}
+#result th,#result td{white-space:nowrap}
+tr.empty td{color:var(--mute);white-space:normal}
