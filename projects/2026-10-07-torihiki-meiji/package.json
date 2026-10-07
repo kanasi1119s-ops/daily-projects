@@ -1,0 +1,12 @@
+{
+  "name": "torihiki-meiji",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "フリーランス新法 取引条件明示 書面ジェネレーター(ブラウザ完結・静的サイト)",
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/serve.mjs"
+  }
+}

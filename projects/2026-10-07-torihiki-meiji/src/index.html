@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>取引条件明示ジェネレーター</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>取引条件明示ジェネレーター</h1>
+  <p>フリーランスに業務を委託するときの取引条件(フリーランス新法 第3条)を、抜け漏れなく書面化するための無料ツールです。入力内容はこのブラウザ内だけで処理され、送信・保存されません。</p>
+</header>
+<main>
+  <form id="form" autocomplete="off">
+    <fieldset>
+      <legend>当事者</legend>
+      <label>発注事業者の名称<input id="clientName" type="text"></label>
+      <label>フリーランスの名称<input id="freelancerName" type="text"></label>
+      <label>業務委託をした日<input id="orderDate" type="date"></label>
+    </fieldset>
+    <fieldset>
+      <legend>業務内容</legend>
+      <label>給付(業務)の内容<textarea id="workDescription" rows="4"></textarea></label>
+      <label>受領する日/役務の提供を受ける日<input id="deliveryDate" type="date"></label>
+      <label>受領する場所/提供を受ける場所<input id="deliveryPlace" type="text" placeholder="例: オンライン納品(メール添付)"></label>
+      <label class="inline"><input id="inspect" type="checkbox">検査をする</label>
+      <label id="inspectionRow" hidden>検査を完了する日<input id="inspectionDate" type="date"></label>
+    </fieldset>
+    <fieldset>
+      <legend>報酬</legend>
+      <label>報酬の額(円)<input id="amount" type="text" inputmode="numeric" placeholder="例: 150000"></label>
+      <label class="inline"><input id="taxIncluded" type="checkbox" checked>税込</label>
+      <label class="inline"><input id="amountUndecided" type="checkbox">報酬額が未定(算定方法を明示)</label>
+      <label id="amountMethodRow" hidden>算定方法<input id="amountMethod" type="text" placeholder="例: 作業時間×時間単価"></label>
+      <label>支払期日<input id="paymentDate" type="date"></label>
+      <p id="limit" class="hint"></p>
+      <label class="inline"><input id="nonCash" type="checkbox">現金以外の方法で支払う</label>
+      <label id="nonCashRow" hidden>支払方法<input id="nonCashMethod" type="text"></label>
+    </fieldset>
+    <button type="button" id="reset" class="secondary">入力をクリア</button>
+  </form>
+  <section aria-live="polite">
+    <h2>チェック結果</h2>
+    <ul id="errors" class="errors" hidden></ul>
+    <ul id="warnings" class="warnings" hidden></ul>
+    <h2>プレビュー</h2>
+    <pre id="preview"></pre>
+    <div class="actions">
+      <button type="button" id="copy">コピー</button>
+      <button type="button" id="print">印刷 / PDF保存</button>
+      <span id="status" role="status"></span>
+    </div>
+  </section>
+</main>
+<footer>
+  <p>本ツールは法的助言ではありません。個別の取引については弁護士・公正取引委員会・フリーランス・トラブル110番等にご確認ください。支払期日の上限は目安であり、正確な判断は法令・ガイドラインに従ってください。</p>
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>
