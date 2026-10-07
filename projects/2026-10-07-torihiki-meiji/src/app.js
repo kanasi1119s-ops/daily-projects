@@ -61,7 +61,7 @@ $('copy').addEventListener('click', async () => {
   }
 });
 $('print').addEventListener('click', () => window.print());
-$('reset').addEventListener('click', () => {
+$('clear').addEventListener('click', () => {
   form.reset();
   render();
   $('status').textContent = '';
