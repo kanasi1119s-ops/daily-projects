@@ -48,11 +48,26 @@ test('報酬未定は算定方法を出力し警告', () => {
   const f = { ...ok, amount: '', amountUndecided: true, amountMethod: '時間単価×稼働' };
   const doc = generateDocument(f);
   assert.match(doc, /未定\(算定方法: 時間単価×稼働\)/);
-  assert.equal(validate({ ...f, amount: '0' }).warnings.length, 1);
+  assert.equal(validate({ ...f }).warnings.length, 1);
 });
 test('書面生成', () => {
   const doc = generateDocument(ok);
   assert.match(doc, /150,000円 \(税込\)/);
   assert.match(doc, /2026年11月30日/);
   assert.equal(formatJa('bad'), '');
+});
+test('全角数字の金額を受け付ける', () => {
+  assert.equal(parseAmount('１５０，０００円'), 150000);
+});
+test('報酬未定: 算定方法が空ならエラー、amountは必須扱いにしない', () => {
+  const r = validate({ ...ok, amount: '', amountUndecided: true });
+  assert.deepEqual(r.errors, ['報酬額が未定の場合は、算定方法を入力してください']);
+  assert.equal(validate({ ...ok, amount: '', amountUndecided: true, amountMethod: 'x' }).errors.length, 0);
+});
+test('日付エラーに日本語ラベルを使う', () => {
+  const r = validate({ ...ok, paymentDate: '2026-13-01' });
+  assert.ok(r.errors.some((e) => e.includes('報酬の支払期日')));
+});
+test('0円は警告', () => {
+  assert.equal(validate({ ...ok, amount: '0' }).warnings.length, 1);
 });

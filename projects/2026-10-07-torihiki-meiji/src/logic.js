@@ -48,7 +48,7 @@ export function latestPaymentDate(receiptDate) {
 
 export function parseAmount(v) {
   if (v === null || v === undefined) return null;
-  const s = String(v).replace(/[,，\s円¥￥]/g, '');
+  const s = String(v).normalize('NFKC').replace(/[,\s円¥]/g, '');
   if (!/^\d+$/.test(s)) return null;
   const n = Number(s);
   return Number.isSafeInteger(n) ? n : null;
@@ -65,16 +65,22 @@ export function validate(form) {
   const f = form || {};
 
   for (const { key, label } of REQUIRED_FIELDS) {
+    if (key === 'amount' && f.amountUndecided === true) continue;
     const v = f[key];
     if (v === undefined || v === null || String(v).trim() === '') errors.push(`「${label}」が未入力です`);
   }
 
+  const dateLabels = { ...Object.fromEntries(REQUIRED_FIELDS.map((r) => [r.key, r.label])), inspectionDate: '検査を完了する日' };
   for (const key of ['orderDate', 'deliveryDate', 'paymentDate', 'inspectionDate']) {
-    if (f[key] && !parseDate(f[key])) errors.push(`日付の形式が正しくありません(${key})`);
+    if (f[key] && !parseDate(f[key])) errors.push(`「${dateLabels[key]}」の日付の形式が正しくありません`);
   }
 
-  if (f.amount !== undefined && f.amount !== '' && parseAmount(f.amount) === null) {
+  if (f.amountUndecided === true) {
+    if (!String(f.amountMethod || '').trim()) errors.push('報酬額が未定の場合は、算定方法を入力してください');
+  } else if (f.amount !== undefined && f.amount !== '' && parseAmount(f.amount) === null) {
     errors.push('報酬の額は0以上の整数(円)で入力してください');
+  } else if (parseAmount(f.amount) === 0) {
+    warnings.push('報酬の額が0円になっています。意図した金額か確認してください');
   }
 
   if (f.inspect === true && !f.inspectionDate) {

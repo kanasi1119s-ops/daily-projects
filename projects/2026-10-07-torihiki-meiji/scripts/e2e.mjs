@@ -34,7 +34,7 @@ check('検査日欄が表示', await page.locator('#inspectionRow').isVisible())
 check('検査日未入力でエラー', await page.locator('#copy').isDisabled());
 await page.check('#amountUndecided');
 check('未定: 算定方法欄表示', await page.locator('#amountMethodRow').isVisible());
-await page.click('#reset');
+await page.click('#clear');
 check('リセットで初期化', (await page.locator('#errors li').count()) === 8);
 console.log(errs, await page.locator('#errors li').count());
 check('JSエラーなし', errs.length === 0);

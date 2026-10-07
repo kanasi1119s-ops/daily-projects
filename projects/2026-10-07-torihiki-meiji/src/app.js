@@ -36,9 +36,7 @@ function render() {
   $('amountMethodRow').hidden = !data.amountUndecided;
   $('nonCashRow').hidden = !data.nonCash;
   $('amount').disabled = data.amountUndecided;
-  const { errors, warnings } = validate(
-    data.amountUndecided ? { ...data, amount: '0' } : data
-  );
+  const { errors, warnings } = validate(data);
   fillList($('errors'), errors);
   fillList($('warnings'), warnings);
   $('limit').textContent = data.deliveryDate
