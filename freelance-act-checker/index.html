@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>フリーランス新法 取引条件チェッカー</title>
+<style>
+:root{--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--ac:#2457d6;--ng:#b3261e;--ok:#1a7f37;--bd:#d8dce3}
+@media(prefers-color-scheme:dark){:root{--bg:#10141c;--fg:#e6e9ef;--card:#1a2030;--ac:#7aa2ff;--ng:#ff8a80;--ok:#6fd48b;--bd:#313a4f}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+section{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px;margin:16px 0}
+h1{font-size:1.4rem}h2{font-size:1.1rem;margin-top:0}
+label{display:block;margin:8px 0 2px;font-size:.9rem}
+input,select,textarea{width:100%;box-sizing:border-box;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--fg);font:inherit}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+button{background:var(--ac);color:#fff;border:0;border-radius:6px;padding:10px 16px;font:inherit;cursor:pointer;margin-top:10px}
+.ng{color:var(--ng)}.ok{color:var(--ok)}pre{white-space:pre-wrap;background:var(--bg);padding:10px;border-radius:6px}
+.note{font-size:.85rem;opacity:.85}
+.chk{display:flex;gap:8px;align-items:flex-start;margin:4px 0}.chk input{width:auto;margin-top:6px}
+</style>
+</head>
+<body>
+<main>
+<h1>フリーランス新法 取引条件チェッカー</h1>
+<p class="note">入力内容はブラウザ内のみで処理され、外部に送信されません。本ツールは一般的な情報提供であり、法的助言ではありません。最終判断は公正取引委員会・厚生労働省の公式資料や専門家で確認してください。</p>
+
+<section id="s1"><h2>① 取引条件の明示チェック（第3条）</h2>
+<div class="row">
+<div><label for="clientName">発注事業者名</label><input id="clientName"></div>
+<div><label for="freelancerName">フリーランス名</label><input id="freelancerName"></div>
+</div>
+<div class="row">
+<div><label for="orderDate">業務委託日</label><input id="orderDate" type="date"></div>
+<div><label for="deliveryDate">納品（受領）期日</label><input id="deliveryDate" type="date"></div>
+<div><label for="payDate">報酬支払期日</label><input id="payDate" type="date"></div>
+</div>
+<label for="content">業務の内容</label><textarea id="content" rows="2"></textarea>
+<div class="row">
+<div><label for="place">納品場所</label><input id="place"></div>
+<div><label for="reward">報酬額</label><input id="reward" placeholder="例: 100,000円（税別）"></div>
+</div>
+<div class="chk"><input type="checkbox" id="rewardUndetermined"><label for="rewardUndetermined">報酬額を確定できない（算定方法を記載）</label></div>
+<input id="rewardMethod" aria-label="報酬の算定方法" placeholder="算定方法">
+<div class="chk"><input type="checkbox" id="nonCash"><label for="nonCash">現金以外で支払う</label></div>
+<input id="nonCashMethod" aria-label="現金以外の支払方法" placeholder="支払方法">
+<div class="chk"><input type="checkbox" id="inspection"><label for="inspection">検査を行う</label></div>
+<input id="inspectionDate" aria-label="検査完了日" placeholder="検査完了日">
+<button id="runTerms">チェックして通知書を作成</button>
+<div id="termsOut" aria-live="polite"></div></section>
+
+<section id="s2"><h2>② 支払サイト検証（第4条：60日ルール）</h2>
+<div class="row">
+<div><label for="closingDay">締め日</label><select id="closingDay"><option value="end">末日</option><option>5</option><option>10</option><option>15</option><option>20</option><option>25</option></select></div>
+<div><label for="payMonthOffset">支払月</label><select id="payMonthOffset"><option value="1">翌月</option><option value="2">翌々月</option><option value="3">3か月後</option></select></div>
+<div><label for="payDay">支払日</label><select id="payDay"><option value="end">末日</option><option>5</option><option>10</option><option>15</option><option>20</option><option>25</option></select></div>
+<div><label for="year">検証年</label><input id="year" type="number" value="2026"></div>
+</div>
+<button id="runPay">全日・12か月で検証</button>
+<div id="payOut" aria-live="polite"></div>
+<p class="note">受領日を1日目として60日、または「2か月以内」運用の範囲を許容として判定しています。再委託など例外は含みません。</p></section>
+
+<section id="s3"><h2>③ 禁止行為セルフチェック（第5条・1か月以上の業務委託）</h2>
+<div id="prohibited"></div><div id="prohOut" aria-live="polite"></div></section>
+</main>
+<script src="src/core.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>

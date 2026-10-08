@@ -1,0 +1,2 @@
+{ "name": "freelance-act-checker", "version": "0.1.0", "private": true,
+  "scripts": { "test": "node --test test/core.test.js", "start": "python3 -m http.server 8080" } }
