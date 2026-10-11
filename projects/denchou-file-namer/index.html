@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="data:,">
+<title>電帳法ファイル名ジェネレーター</title>
+<style>
+:root{--bg:#f7f8fa;--fg:#1c2330;--mut:#5b6575;--card:#fff;--bd:#d9dee7;--ac:#1f6feb;--err:#c62828;--ok:#2e7d32}
+@media (prefers-color-scheme:dark){:root{--bg:#10141b;--fg:#e8ecf3;--mut:#9aa5b5;--card:#181e28;--bd:#2c3544;--ac:#5aa0ff;--err:#ff7b72;--ok:#6fcf7a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:.4em 0}.sub{color:var(--mut);margin-top:0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;margin:14px 0}
+#drop{border:2px dashed var(--bd);text-align:center;padding:28px 12px;cursor:pointer}
+#drop.over{border-color:var(--ac)}
+button,select,input{font:inherit;color:inherit}
+button{background:var(--ac);color:#fff;border:0;border-radius:6px;padding:8px 14px;cursor:pointer}
+button.sec{background:transparent;color:var(--ac);border:1px solid var(--ac)}
+button:disabled{opacity:.5;cursor:not-allowed}
+input,select{background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:6px 8px;width:100%}
+.row{display:grid;grid-template-columns:1.4fr 1fr 1.3fr 1fr .9fr;gap:6px;align-items:start;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--bd)}
+.row .orig{grid-column:1/-1;font-size:.85rem;color:var(--mut);word-break:break-all}
+.row .res{grid-column:1/-1;font-weight:600;word-break:break-all}
+.res.ok{color:var(--ok)}.res.err{color:var(--err)}
+label small{display:block;color:var(--mut)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.note{font-size:.85rem;color:var(--mut)}
+@media (max-width:700px){.row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>電帳法ファイル名ジェネレーター</h1>
+<p class="sub">領収書・請求書などのファイルを「取引年月日・取引先・取引金額」で検索できる名前に整えます。<strong>ファイルはブラウザの外へ送信されません。</strong></p>
+
+<div class="card" id="drop" tabindex="0" role="button" aria-label="ファイルを選択">
+  ここにPDF・画像をドラッグ&ドロップ、またはクリックして選択
+  <input id="file" type="file" multiple hidden>
+</div>
+
+<div class="card bar">
+  <label>並び順
+    <select id="order">
+      <option value="date-vendor-amount">日付_取引先_金額_種別</option>
+      <option value="date-amount-vendor">日付_金額_取引先_種別</option>
+      <option value="vendor-date-amount">取引先_日付_金額_種別</option>
+    </select>
+  </label>
+  <button id="apply" class="sec" type="button" disabled>1件目の取引先・種別を全件に反映</button>
+  <button id="clear" class="sec" type="button" disabled>全てクリア</button>
+</div>
+
+<div id="list"></div>
+
+<div class="card bar">
+  <button id="dlAll" type="button" disabled>名前を付けて全てダウンロード</button>
+  <button id="dlCsv" class="sec" type="button" disabled>索引CSVをダウンロード</button>
+  <span id="status" class="note" role="status"></span>
+</div>
+
+<p class="note">本ツールは命名と索引作成の補助です。電子帳簿保存法への適合(タイムスタンプ・訂正削除の履歴・事務処理規程など)を保証するものではありません。最終判断は国税庁の公開情報や税理士にご確認ください。<a href="privacy.html">プライバシー</a></p>
+</main>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

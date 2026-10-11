@@ -1,0 +1,13 @@
+{
+  "name": "denchou-namer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "電子帳簿保存法の検索要件に沿ったファイル名を、ブラウザ内だけで作るツール",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "build": "node scripts/build.mjs",
+    "start": "npx --yes http-server dist -p 5173"
+  },
+  "license": "MIT"
+}
