@@ -1,0 +1,11 @@
+{
+  "name": "zeikurabe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "インボイス制度後の消費税納税額を方式別に比較する静的シミュレーター",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "start": "node serve.js"
+  }
+}

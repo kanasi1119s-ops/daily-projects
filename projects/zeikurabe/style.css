@@ -1,0 +1,20 @@
+:root{--bg:#f7f8fa;--fg:#1d2330;--card:#fff;--accent:#0b6b4f;--muted:#5b6475;--line:#d9dde5;--warn:#b42318}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--fg:#e8ebf2;--card:#1b202b;--accent:#4cc9a0;--muted:#a3abbb;--line:#2f3645;--warn:#ff8a80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+header,main{max-width:720px;margin:0 auto;padding:16px}
+h1{margin:8px 0 0;color:var(--accent)}header p{margin:0;color:var(--muted)}
+form,section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0}
+label{display:block;margin-bottom:12px;font-weight:600}
+input[type=text],select{display:block;width:100%;margin-top:4px;padding:10px;font-size:16px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg)}
+label.check{font-weight:400}
+button{width:100%;padding:12px;font-size:16px;font-weight:700;border:0;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer}
+#error{color:var(--warn);font-weight:600}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+tr.best{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+tr.off{color:var(--muted)}
+.small{font-size:14px;color:var(--muted)}
+.disclaimer{font-size:14px}
+@media (max-width:520px){th:nth-child(3),td:nth-child(3){display:none}}
