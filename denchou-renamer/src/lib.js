@@ -5,7 +5,8 @@ export const DOC_TYPES = ['請求書', '領収書', '見積書', '納品書', '�
 
 /** ファイル名に使えない文字を除去し、空白を詰める */
 export function sanitizePart(s) {
-  return String(s ?? '').replace(FORBIDDEN, '').replace(/\s+/g, '').trim();
+  // 禁則文字・空白を除去し、先頭末尾のドット（隠しファイル/Windows非対応）も落とす
+  return String(s ?? '').replace(FORBIDDEN, '').replace(/\s+/g, '').replace(/^\.+|\.+$/g, '').trim();
 }
 
 /** 'YYYY-MM-DD' / 'YYYYMMDD' / 'YYYY/M/D' を検証し 'YYYYMMDD' を返す。不正なら null */
@@ -41,7 +42,7 @@ export function buildName({ date, partner, amount, docType, original }) {
   const errors = [];
   const d = normalizeDate(date);
   if (!d) errors.push('日付が不正です（例: 2026-10-14）');
-  const p = sanitizePart(partner);
+  const p = [...sanitizePart(partner)].slice(0, 40).join(''); // 長すぎるファイル名対策
   if (!p) errors.push('取引先を入力してください');
   const a = parseAmount(amount);
   if (a === null) errors.push('金額は整数で入力してください');

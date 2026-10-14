@@ -51,3 +51,10 @@ test('zip is valid (python zipfile)', () => {
   assert.ok(out.includes('日本語.txt'));
   assert.ok(out.includes('こんにちは'));
 });
+
+test('sanitizePart strips leading/trailing dots; partner truncated to 40 chars', () => {
+  assert.equal(sanitizePart('..hidden.'), 'hidden');
+  const r = buildName({ date: '2026-01-01', partner: 'あ'.repeat(100), amount: '1', docType: '請求書', original: 'x.pdf' });
+  assert.equal([...r.name.split('_')[1]].length, 40);
+  assert.equal(buildName({ date: '2026-01-01', partner: '...', amount: '1', docType: '', original: 'x.pdf' }).ok, false);
+});

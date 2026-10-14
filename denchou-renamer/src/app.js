@@ -90,8 +90,13 @@ function download(blob, filename) {
 $('csv').addEventListener('click', () => {
   download(new Blob([buildCsv(csvRows())], { type: 'text/csv;charset=utf-8' }), '索引簿.csv');
 });
+const MAX_ZIP_BYTES = 500 * 1024 * 1024; // メモリ上で組み立てるため上限を設ける
 $('zip').addEventListener('click', async () => {
   const rows = compute();
+  if (items.reduce((n, it) => n + it.file.size, 0) > MAX_ZIP_BYTES) {
+    alert('合計500MBを超えています。分割して処理してください。');
+    return;
+  }
   const files = [];
   for (const { it, name } of rows) files.push({ name, data: new Uint8Array(await it.file.arrayBuffer()) });
   files.push({ name: '索引簿.csv', data: new TextEncoder().encode(buildCsv(csvRows())) });
