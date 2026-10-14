@@ -1,0 +1,11 @@
+{
+  "name": "denchou-renamer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "電子帳簿保存法の検索要件に沿って領収書・請求書ファイルをブラウザ内でリネームするツール",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "start": "python3 -m http.server 8080 --directory src"
+  }
+}

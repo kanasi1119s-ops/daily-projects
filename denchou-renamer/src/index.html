@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob:; connect-src 'none'">
+<title>電帳法リネーマー</title>
+<style>
+:root{--bg:#f6f7f9;--fg:#1c2330;--card:#fff;--line:#d9dde4;--acc:#1d5fd1;--err:#c0392b}
+@media (prefers-color-scheme:dark){:root{--bg:#12161d;--fg:#e6e9ef;--card:#1b212b;--line:#2f3846;--acc:#6aa2ff;--err:#ff7b6b}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,sans-serif}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:.4em 0}.note{font-size:.85rem;opacity:.8}
+#drop{border:2px dashed var(--line);background:var(--card);border-radius:10px;padding:28px;text-align:center;cursor:pointer}
+#drop.over{border-color:var(--acc)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0;display:grid;gap:8px;grid-template-columns:repeat(4,1fr)}
+.row .orig{grid-column:1/-1;font-size:.85rem;opacity:.8;word-break:break-all}
+.row .out{grid-column:1/-1;font-weight:600;word-break:break-all}
+.row .err{grid-column:1/-1;color:var(--err);font-size:.85rem}
+label{display:flex;flex-direction:column;font-size:.8rem;gap:2px}
+input,select,button{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg)}
+button{cursor:pointer}button.primary{background:var(--acc);color:#fff;border-color:var(--acc)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+@media (max-width:640px){.row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>電帳法リネーマー</h1>
+<p class="note">請求書・領収書のファイル名を「日付_取引先_金額_書類種別」に統一し、検索要件用の索引CSVも出力します。ファイルはブラウザ内だけで処理され、外部へ送信されません。</p>
+<div id="drop" tabindex="0" role="button" aria-label="ファイルを選択">ここにファイルをドロップ、またはクリックして選択<input id="picker" type="file" multiple hidden></div>
+<div id="list"></div>
+<div class="bar">
+<button id="zip" class="primary" disabled>ZIPでまとめてダウンロード（索引CSV付き）</button>
+<button id="csv" disabled>索引CSVのみ</button>
+<button id="clear" disabled>全てクリア</button>
+</div>
+<p class="note">※本ツールは入力補助です。電子帳簿保存法の要件（真実性・可視性の確保等）を満たすかの最終判断は、税理士または国税庁の公開情報でご確認ください。法的助言ではありません。</p>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>
