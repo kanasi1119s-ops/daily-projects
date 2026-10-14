@@ -25,10 +25,20 @@ function render() {
       <label>取引先<input data-k="partner" data-id="${it.id}" value="${esc(it.partner)}"></label>
       <label>金額(円)<input data-k="amount" data-id="${it.id}" value="${esc(it.amount)}" inputmode="numeric"></label>
       <label>種別<select data-k="docType" data-id="${it.id}">${DOC_TYPES.map((t) => `<option${t === it.docType ? ' selected' : ''}>${t}</option>`).join('')}</select></label>
-      <div class="out">${b.ok ? '→ ' + esc(name) : ''}</div>
-      ${b.ok ? '' : `<div class="err">${b.errors.map(esc).join(' / ')}</div>`}
+      <div class="out"></div>
+      <div class="err"></div>
       <button data-rm="${it.id}">削除</button>`;
     list.appendChild(el);
+  });
+  refreshOutputs(rows);
+}
+
+// 入力中はDOMを作り直さず、出力・エラー・ボタン状態のみ更新（フォーカス維持）
+function refreshOutputs(rows = compute()) {
+  const els = $('list').children;
+  rows.forEach(({ b, name }, i) => {
+    els[i].querySelector('.out').textContent = b.ok ? '→ ' + name : '';
+    els[i].querySelector('.err').textContent = b.ok ? '' : b.errors.join(' / ');
   });
   const allOk = rows.length > 0 && rows.every((r) => r.b.ok);
   $('zip').disabled = !allOk;
@@ -41,13 +51,12 @@ function addFiles(files) {
   render();
 }
 
-$('list').addEventListener('change', (e) => {
+$('list').addEventListener('input', (e) => {
   const t = e.target;
   const it = items.find((x) => x.id === Number(t.dataset.id));
   if (!it) return;
   it[t.dataset.k] = t.value;
-  // 入力欄のフォーカスを保つため、Enter/blur時のみ再描画
-  render();
+  refreshOutputs();
 });
 $('list').addEventListener('click', (e) => {
   const id = e.target.dataset?.rm;
