@@ -1,0 +1,27 @@
+:root{--bg:#f7f8fa;--fg:#1c2330;--mut:#667085;--card:#fff;--line:#e2e6ee;--acc:#2f6fed;--dng:#d92d20}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--fg:#e8ecf4;--mut:#9aa4b5;--card:#1b2030;--line:#2a3144;--acc:#6b9bff;--dng:#ff6b5e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+header,main,footer{max-width:760px;margin:0 auto;padding:0 16px}
+h1{margin:24px 0 4px;font-size:1.6rem}h2{font-size:1.1rem;margin:28px 0 8px}
+.lead,.note,footer{color:var(--mut);font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.card span{display:block;font-size:.8rem;color:var(--mut)}.card strong{font-size:1.25rem}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.list li{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.list .sub{color:var(--mut);font-size:.85rem}.list .off{opacity:.55}
+.bar{height:10px;background:var(--acc);border-radius:5px;min-width:2px}
+.cat{display:grid;grid-template-columns:8em 1fr 6em;gap:8px;align-items:center;font-size:.9rem;margin:4px 0}
+.cat b{text-align:right;font-weight:500}
+form{display:grid;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+label{display:grid;gap:4px;font-size:.9rem}
+input,select{font:inherit;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+button,.btn{font:inherit;padding:8px 14px;border-radius:6px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer;display:inline-block}
+button.sec,.btn{background:transparent;color:var(--acc)}
+button.danger{background:transparent;color:var(--dng);border-color:var(--dng)}
+.row{display:flex;gap:8px;flex-wrap:wrap}.err{color:var(--dng);margin:0;min-height:1.2em}
+.soon{color:var(--dng);font-weight:600}
+footer{padding:24px 16px 48px}
+@media (max-width:480px){.cards{grid-template-columns:1fr}.cat{grid-template-columns:6em 1fr 5em}}
+[hidden]{display:none!important}
