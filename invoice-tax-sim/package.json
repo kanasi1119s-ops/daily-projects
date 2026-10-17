@@ -1,0 +1,13 @@
+{
+  "name": "invoice-tax-sim",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "フリーランス向け インボイス消費税シミュレーター(本則/簡易課税/2割特例の比較)",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "build": "node scripts/build.js",
+    "start": "node scripts/serve.js"
+  },
+  "license": "MIT"
+}

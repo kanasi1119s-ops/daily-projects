@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>インボイス消費税シミュレーター</title>
+<meta name="description" content="フリーランス向け。本則課税・簡易課税・2割特例の納税額を比較する概算ツール。">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+<main>
+  <h1>インボイス消費税シミュレーター</h1>
+  <p class="lead">年間の売上と経費を入れると、本則課税・簡易課税・2割特例の納税額(概算)を比較します。</p>
+  <form id="f" novalidate>
+    <label>課税売上(税込・年間・円)
+      <input id="sales" type="number" min="0" step="1" inputmode="numeric" value="5500000" required>
+    </label>
+    <label>課税仕入れ・経費(税込・年間・円)
+      <input id="purchases" type="number" min="0" step="1" inputmode="numeric" value="1100000" required>
+    </label>
+    <label>経費のうち免税事業者等(非適格)への支払い割合(%)
+      <input id="nq" type="number" min="0" max="100" step="1" inputmode="numeric" value="0">
+    </label>
+    <label>簡易課税の事業区分
+      <select id="bt">
+        <option value="1">第1種 卸売業(90%)</option>
+        <option value="2">第2種 小売業(80%)</option>
+        <option value="3">第3種 製造業等(70%)</option>
+        <option value="4">第4種 その他(60%)</option>
+        <option value="5" selected>第5種 サービス業等(50%)</option>
+        <option value="6">第6種 不動産業(40%)</option>
+      </select>
+    </label>
+    <label>試算の基準日(経過措置の控除率判定用)
+      <input id="asof" type="date">
+    </label>
+    <label class="chk"><input id="elig" type="checkbox" checked> 2割特例を使える前提で試算する(適用可否は要確認)</label>
+  </form>
+  <p id="err" role="alert" hidden></p>
+  <section id="out" aria-live="polite"></section>
+  <section class="note">
+    <h2>ご注意</h2>
+    <ul>
+      <li>本ツールは概算の試算であり、税務上の助言ではありません。申告・制度の適用可否は国税庁の公表情報または税理士にご確認ください。</li>
+      <li>税率・みなし仕入率・経過措置の控除率は改正される場合があります。入力値はブラウザ内でのみ計算され、送信・保存されません。</li>
+      <li>簡易課税・2割特例の適用には事前届出や要件があります。端数処理は簡略化しています。</li>
+    </ul>
+  </section>
+</main>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

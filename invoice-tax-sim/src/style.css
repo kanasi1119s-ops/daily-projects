@@ -1,0 +1,16 @@
+:root{--bg:#fafafa;--fg:#1c1c1e;--card:#fff;--bd:#d9d9de;--ac:#0a6cff;--ok:#0a7d3b}
+@media (prefers-color-scheme:dark){:root{--bg:#161618;--fg:#f2f2f5;--card:#222226;--bd:#3a3a40;--ac:#5aa2ff;--ok:#4cd68a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem}h2{font-size:1.05rem}
+form{display:grid;gap:12px}
+label{display:grid;gap:4px;font-size:.92rem}
+input,select{font:inherit;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--fg);width:100%}
+.chk{display:flex;gap:8px;align-items:center}.chk input{width:auto}
+#err{color:#c62828;font-weight:600}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px;margin:8px 0}
+.card.best{border:2px solid var(--ok)}
+.card b{font-size:1.25rem}
+.badge{color:var(--ok);font-weight:700;font-size:.85rem}
+.note{font-size:.85rem;opacity:.85}
