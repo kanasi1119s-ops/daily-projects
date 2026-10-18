@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:,">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>インボイス経過措置 試算ツール</title>
+<style>
+:root{--bg:#fff;--fg:#1d2530;--muted:#5b6675;--line:#d9dee5;--accent:#1a5fb4;--warn:#fff4d6}
+@media (prefers-color-scheme:dark){:root{--bg:#14181d;--fg:#e6e9ee;--muted:#9aa5b4;--line:#2d3540;--accent:#6ea8fe;--warn:#3a3217}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem}h2{font-size:1.1rem;margin-top:2rem}
+table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid var(--line);padding:6px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+input,select,button{font:inherit;padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);max-width:100%}
+button{cursor:pointer;background:var(--accent);color:#fff;border:0}button.sub{background:none;color:var(--accent);border:1px solid var(--accent)}
+.note{background:var(--warn);padding:10px 12px;border-radius:8px;font-size:.9rem}
+.err{color:#c01c28;min-height:1.4em}.sum td{font-weight:700}
+.wrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<main>
+<h1>インボイス経過措置 試算ツール</h1>
+<p class="note">適格請求書発行事業者以外（免税事業者など）からの仕入について、経過措置による控除割合ごとの<strong>控除できる消費税額／できない消費税額</strong>を試算します。概算の参考値であり、税務上の判断は税理士・税務署にご確認ください。入力内容はブラウザ内でのみ処理され、送信されません。</p>
+
+<h2>1. 取引ごとの試算</h2>
+<label><input type="checkbox" id="small"> 少額特例（税込1万円未満・2029/9/30まで）を適用する <small>※基準期間の課税売上高1億円以下などの要件あり</small></label>
+<div class="wrap"><table id="lines"><thead><tr><th>取引日</th><th>税込金額(円)</th><th>税率</th><th>控除割合</th><th>消費税額</th><th>控除可</th><th>控除不可</th><th></th></tr></thead><tbody></tbody>
+<tfoot><tr class="sum"><td colspan="4">合計</td><td id="t-tax">0</td><td id="t-ded">0</td><td id="t-non">0</td><td></td></tr></tfoot></table></div>
+<p><button id="add" class="sub" type="button">行を追加</button></p>
+<p class="err" id="err" role="alert"></p>
+
+<h2>2. 年間支払額からの見通し</h2>
+<label>免税事業者等への年間支払額(税込・円) <input id="annual" inputmode="numeric" value="1,100,000"></label>
+<select id="annual-rate" aria-label="税率"><option value="10">10%</option><option value="8">8%</option></select>
+<div class="wrap"><table id="proj"><thead><tr><th>期間</th><th>控除割合</th><th>消費税額</th><th>控除可</th><th>控除不可(実質負担増)</th></tr></thead><tbody></tbody></table></div>
+<p class="err" id="err2" role="alert"></p>
+
+<h2>前提と注意</h2>
+<ul>
+<li>端数処理は1円未満切り捨ての簡易計算です（実際の処理は事業者の会計方針・請求書単位の扱いによります）。</li>
+<li>控除割合は経過措置の現行規定に基づく値を <code>src/rates.js</code> に保持しています。法改正の可能性があるため<a id="src" target="_blank" rel="noopener">国税庁の公表資料</a>で最新を確認してください。</li>
+<li>簡易課税・2割特例など他の制度を選択している場合は対象外です。</li>
+</ul>
+</main>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
