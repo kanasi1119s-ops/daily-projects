@@ -11,9 +11,10 @@ const dlBtn = document.querySelector<HTMLButtonElement>("#download")!;
 function read(): NoticeInput {
   const v: NoticeInput = { ...emptyInput };
   for (const key of Object.keys(emptyInput) as (keyof NoticeInput)[]) {
-    const el = form.elements.namedItem(key) as HTMLInputElement | HTMLTextAreaElement | null;
+    const el = form.elements.namedItem(key) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
     if (!el) continue;
-    if (el instanceof HTMLInputElement && el.type === "checkbox") (v[key] as boolean) = el.checked;
+    if (el instanceof HTMLSelectElement) (v[key] as string) = el.value;
+    else if (el instanceof HTMLInputElement && el.type === "checkbox") (v[key] as boolean) = el.checked;
     else (v[key] as string) = el.value;
   }
   return v;
@@ -38,8 +39,12 @@ function update() {
 
 form.addEventListener("input", update);
 copyBtn.addEventListener("click", async () => {
-  await navigator.clipboard.writeText(out.textContent ?? "");
-  copyBtn.textContent = "コピーしました";
+  try {
+    await navigator.clipboard.writeText(out.textContent ?? "");
+    copyBtn.textContent = "コピーしました";
+  } catch {
+    copyBtn.textContent = "コピー失敗: 手動で選択してください";
+  }
   setTimeout(() => (copyBtn.textContent = "テキストをコピー"), 1500);
 });
 printBtn.addEventListener("click", () => window.print());

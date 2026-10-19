@@ -8,6 +8,7 @@ export interface NoticeInput {
   hasInspection: boolean;
   inspectionDate: string;
   amount: string; // 数字のみ(円)
+  taxMode: "incl" | "excl" | ""; // 税込 / 税別
   amountNote: string; // 算定方法など(金額が確定できない場合)
   dueDate: string; // 支払期日
   paymentMethod: string; // 例: 銀行振込
@@ -17,7 +18,7 @@ export interface NoticeInput {
 export const emptyInput: NoticeInput = {
   clientName: "", freelancerName: "", orderDate: "", description: "",
   deliveryDate: "", deliveryPlace: "", hasInspection: false, inspectionDate: "",
-  amount: "", amountNote: "", dueDate: "", paymentMethod: "銀行振込", nonCashDetail: "",
+  amount: "", taxMode: "incl", amountNote: "", dueDate: "", paymentMethod: "銀行振込", nonCashDetail: "",
 };
 
 export interface Issue { level: "error" | "warn"; field: keyof NoticeInput | "form"; message: string }
@@ -59,8 +60,8 @@ export function validate(i: NoticeInput): Issue[] {
     out.push({ level: "error", field: "amount", message: "報酬額、または報酬の算定方法のいずれかが必須です" });
   } else if (amt && !/^\d+$/.test(amt)) {
     out.push({ level: "error", field: "amount", message: "報酬額は半角数字のみで入力してください" });
-  } else if (amt && Number(amt) <= 0) {
-    out.push({ level: "error", field: "amount", message: "報酬額は1円以上で入力してください" });
+  } else if (amt && (Number(amt) <= 0 || amt.length > 12)) {
+    out.push({ level: "error", field: "amount", message: "報酬額は1円以上、12桁以内で入力してください" });
   }
 
   if (/現金|銀行|振込/.test(i.paymentMethod) === false && !i.nonCashDetail.trim()) {
@@ -68,9 +69,12 @@ export function validate(i: NoticeInput): Issue[] {
   }
 
   const order = parseDate(i.orderDate), deliv = parseDate(i.deliveryDate), due = parseDate(i.dueDate);
-  const base = i.hasInspection && parseDate(i.inspectionDate) ? deliv : deliv; // 起算は受領日
+  const base = deliv; // 60日の起算は給付の受領日
   if (order && deliv && deliv.getTime() < order.getTime())
     out.push({ level: "warn", field: "deliveryDate", message: "納品日が発注日より前になっています" });
+  const insp = i.hasInspection ? parseDate(i.inspectionDate) : null;
+  if (insp && deliv && insp.getTime() < deliv.getTime())
+    out.push({ level: "warn", field: "inspectionDate", message: "検収完了日が納品日より前になっています" });
   if (due && deliv && due.getTime() < deliv.getTime())
     out.push({ level: "warn", field: "dueDate", message: "支払期日が納品日より前になっています" });
   if (due && base && (due.getTime() - base.getTime()) / DAY > 60)
@@ -99,7 +103,7 @@ export function render(i: NoticeInput): string {
   if (i.hasInspection) lines.push(`4. 検査完了日(検収完了日): ${fmtDate(i.inspectionDate)}`);
   else lines.push("4. 検査: 行わない");
   const amt = i.amount.trim();
-  lines.push(`5. 報酬の額: ${amt ? fmtYen(amt) + "(消費税の取扱いは別途記載のとおり)" : "下記算定方法による"}`);
+  lines.push(`5. 報酬の額: ${amt ? fmtYen(amt) + (i.taxMode === "incl" ? "(税込)" : i.taxMode === "excl" ? "(税別)" : "") : "下記算定方法による"}`);
   if (i.amountNote.trim()) lines.push(`   報酬の算定方法・備考: ${i.amountNote.trim()}`);
   lines.push(`6. 報酬の支払期日: ${fmtDate(i.dueDate)}`);
   lines.push(`7. 報酬の支払方法: ${i.paymentMethod}`);

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="data:," />
 <title>フリーランス取引条件 明示書ジェネレーター</title>
 <meta name="description" content="フリーランス・事業者間取引適正化等法の取引条件明示に必要な項目を入力して、明示書を作成。入力内容はブラウザ内のみで処理され、サーバーに送信されません。" />
 </head>
@@ -22,6 +23,7 @@
 <label><input type="checkbox" name="hasInspection" />検査(検収)を行う</label>
 <div id="inspection-row" hidden><label>検収完了日<input type="date" name="inspectionDate" /></label></div>
 <label>報酬額(円・半角数字)<input type="text" name="amount" inputmode="numeric" /></label>
+<label>消費税<select name="taxMode"><option value="incl">税込</option><option value="excl">税別</option><option value="">記載しない</option></select></label>
 <label>報酬の算定方法・備考(金額が未確定の場合など)<textarea name="amountNote" rows="2"></textarea></label>
 <label>支払期日<input type="date" name="dueDate" /></label>
 <label>支払方法<input type="text" name="paymentMethod" value="銀行振込" /></label>

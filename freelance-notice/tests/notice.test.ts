@@ -4,7 +4,7 @@ import { emptyInput, hasError, parseDate, render, validate, type NoticeInput } f
 const ok: NoticeInput = {
   ...emptyInput, clientName: "株式会社A", freelancerName: "山田太郎", orderDate: "2026-10-01",
   description: "LP制作", deliveryDate: "2026-10-31", deliveryPlace: "メール納品",
-  amount: "100000", dueDate: "2026-11-30",
+  amount: "100000", taxMode: "incl" as const, dueDate: "2026-11-30",
 };
 
 describe("validate", () => {
@@ -40,4 +40,11 @@ describe("render", () => {
     expect(t).toContain("2026年11月30日");
     expect(t).toContain("検査: 行わない");
   });
+});
+
+describe("round1 fixes", () => {
+  it("rejects over 12 digits", () => expect(hasError(validate({ ...ok, amount: "1234567890123" }))).toBe(true));
+  it("renders tax mode", () => expect(render({ ...ok, taxMode: "excl" })).toContain("(税別)"));
+  it("warns inspection before delivery", () =>
+    expect(validate({ ...ok, hasInspection: true, inspectionDate: "2026-10-15" }).some((x) => x.field === "inspectionDate")).toBe(true));
 });
