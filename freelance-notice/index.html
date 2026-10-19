@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>フリーランス取引条件 明示書ジェネレーター</title>
+<meta name="description" content="フリーランス・事業者間取引適正化等法の取引条件明示に必要な項目を入力して、明示書を作成。入力内容はブラウザ内のみで処理され、サーバーに送信されません。" />
+</head>
+<body>
+<main>
+<header>
+<h1>フリーランス取引条件 明示書ジェネレーター</h1>
+<p class="disclaimer">入力内容はお使いのブラウザ内だけで処理され、外部に送信されません。</p>
+</header>
+<form id="form" class="card" autocomplete="off">
+<label>発注者(業務委託事業者)の名称<input type="text" name="clientName" /></label>
+<label>受注者(フリーランス)の名称<input type="text" name="freelancerName" /></label>
+<label>発注日<input type="date" name="orderDate" /></label>
+<label>業務内容(給付の内容)<textarea name="description" rows="4"></textarea></label>
+<label>納品(役務提供)日<input type="date" name="deliveryDate" /></label>
+<label>納品・提供場所<input type="text" name="deliveryPlace" placeholder="例: オンライン納品(メール)" /></label>
+<label><input type="checkbox" name="hasInspection" />検査(検収)を行う</label>
+<div id="inspection-row" hidden><label>検収完了日<input type="date" name="inspectionDate" /></label></div>
+<label>報酬額(円・半角数字)<input type="text" name="amount" inputmode="numeric" /></label>
+<label>報酬の算定方法・備考(金額が未確定の場合など)<textarea name="amountNote" rows="2"></textarea></label>
+<label>支払期日<input type="date" name="dueDate" /></label>
+<label>支払方法<input type="text" name="paymentMethod" value="銀行振込" /></label>
+<label>現金以外で支払う場合の明示事項<textarea name="nonCashDetail" rows="2"></textarea></label>
+</form>
+<section class="card">
+<h2>プレビュー</h2>
+<ul id="issues"></ul>
+<pre id="output"></pre>
+<div class="actions">
+<button id="copy" type="button">テキストをコピー</button>
+<button id="download" type="button">テキスト保存</button>
+<button id="print" type="button">印刷 / PDF</button>
+</div>
+<p class="disclaimer disclaimer-box">本ツールは法律の専門家による助言ではありません。出力内容は必ずご自身で確認し、必要に応じて公正取引委員会・中小企業庁の資料や専門家にご確認ください。</p>
+</section>
+</main>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

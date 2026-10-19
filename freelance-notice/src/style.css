@@ -1,0 +1,16 @@
+:root { font-family: system-ui, "Hiragino Sans", "Noto Sans JP", sans-serif; color: #1a1a1a; }
+body { margin: 0; background: #f6f7f9; }
+main { max-width: 960px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+@media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+header { grid-column: 1 / -1; }
+h1 { font-size: 1.4rem; margin: 0 0 4px; }
+.card { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px #0002; }
+label { display: block; margin-top: 10px; font-size: .9rem; font-weight: 600; }
+input[type=text], input[type=date], textarea { width: 100%; box-sizing: border-box; padding: 8px; font: inherit; border: 1px solid #bbb; border-radius: 4px; }
+input[type=checkbox] { margin-right: 6px; }
+#output { white-space: pre-wrap; font-family: inherit; line-height: 1.7; }
+#issues { padding-left: 1.2em; font-size: .85rem; } .error { color: #b00020; } .warn { color: #8a5a00; }
+button { padding: 8px 12px; margin: 4px 4px 0 0; font: inherit; cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+.disclaimer { font-size: .8rem; color: #555; }
+@media print { body { background: #fff; } form, header, #issues, .actions, .disclaimer-box { display: none; } main { display: block; } .card { box-shadow: none; } }
