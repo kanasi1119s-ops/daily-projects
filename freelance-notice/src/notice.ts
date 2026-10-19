@@ -78,7 +78,7 @@ export function validate(i: NoticeInput): Issue[] {
   if (due && deliv && due.getTime() < deliv.getTime())
     out.push({ level: "warn", field: "dueDate", message: "支払期日が納品日より前になっています" });
   if (due && base && (due.getTime() - base.getTime()) / DAY > 60)
-    out.push({ level: "warn", field: "dueDate", message: "支払期日が納品(受領)日から60日を超えています。法律上は受領日から60日以内の支払期日設定が求められます" });
+    out.push({ level: "warn", field: "dueDate", message: "支払期日が納品(受領)日から60日を超えています。原則として受領日から60日以内に支払期日を定める必要があるとされています(最新の公的資料でご確認ください)" });
   return out;
 }
 
