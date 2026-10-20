@@ -1,0 +1,13 @@
+{
+  "name": "invoice-tax-simulator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "インボイス制度下の消費税納付額を本則・簡易・特例で比較する静的シミュレーター",
+  "scripts": {
+    "start": "node scripts/serve.js",
+    "test": "node --test test/*.test.js",
+    "build": "node scripts/build.js"
+  },
+  "license": "UNLICENSED"
+}
