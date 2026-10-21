@@ -1,0 +1,13 @@
+:root{--bg:#fafafa;--fg:#1c1c1e;--card:#fff;--line:#d8d8de;--ok:#146c2e;--ng:#b3261e;--accent:#2457c5}
+@media (prefers-color-scheme:dark){:root{--bg:#141416;--fg:#ececf0;--card:#1f1f23;--line:#38383f;--ok:#6fd48a;--ng:#ff8a80;--accent:#8ab4ff}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 16px 48px}
+section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:20px 0}
+h1{font-size:1.5rem}h2{font-size:1.15rem}
+label{display:block;margin:12px 0;font-weight:600}
+input,select,textarea{display:block;width:100%;box-sizing:border-box;margin-top:4px;padding:8px;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+button{padding:10px 18px;font:inherit;font-weight:700;color:#fff;background:var(--accent);border:0;border-radius:8px;cursor:pointer}
+pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px}
+.small,.note{font-size:.85rem;opacity:.85}
+.ok{color:var(--ok);font-weight:700}.ng{color:var(--ng);font-weight:700}
+.req::after{content:" *";color:var(--ng)}

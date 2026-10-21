@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>フリーランス新法 支払期日チェッカー</title>
+<meta name="description" content="受領日と支払期日から60日ルールの目安を確認し、取引条件の明示項目を整理できる無料ツール(ブラウザ内で完結)。" />
+<link rel="icon" href="data:," />
+</head>
+<body>
+<main>
+  <h1>フリーランス新法 支払期日チェッカー</h1>
+  <p class="note">入力内容はブラウザ内でのみ処理され、送信・保存されません。本ツールは一般的な目安の提供であり、法的助言ではありません。</p>
+
+  <section aria-labelledby="h-pay">
+    <h2 id="h-pay">1. 支払期日(60日ルール)チェック</h2>
+    <form id="pay-form" novalidate>
+      <label>受領日(成果物を受け取った日)<input type="date" id="received" required /></label>
+      <label>契約上の支払期日<input type="date" id="due" required /></label>
+      <label>支払サイクル
+        <select id="mode">
+          <option value="individual">納品ごとの個別払い</option>
+          <option value="monthly">締め日方式(月締め)</option>
+        </select>
+      </label>
+      <label id="closing-wrap" hidden>締め日(31 = 月末)<input type="number" id="closing" min="1" max="31" value="31" /></label>
+      <button type="submit">判定する</button>
+    </form>
+    <div id="pay-result" role="status" aria-live="polite"></div>
+    <p class="small">※ 受領日を1日目として数えます。締め日方式では、期間末日に受領したものとして数える運用の可否は個別事情で異なるため、必ず公正取引委員会等の公式資料でご確認ください。</p>
+  </section>
+
+  <section aria-labelledby="h-terms">
+    <h2 id="h-terms">2. 取引条件の明示 ジェネレーター</h2>
+    <form id="terms-form" novalidate></form>
+    <div id="terms-warn" role="status" aria-live="polite"></div>
+    <pre id="terms-out" aria-label="生成された取引条件"></pre>
+    <button type="button" id="copy">コピーする</button>
+    <span id="copy-msg" role="status"></span>
+  </section>
+
+  <footer>
+    <p class="small">掲載の項目・期間は施行時点の一般的な理解に基づく簡易整理です。最新の法令・ガイドラインを確認し、重要な取引は専門家にご相談ください。</p>
+  </footer>
+</main>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
