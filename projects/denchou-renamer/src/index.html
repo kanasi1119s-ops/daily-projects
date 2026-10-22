@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'self' data:;">
+<title>電帳法ファイル名リネーマー</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>電帳法ファイル名リネーマー</h1>
+  <p class="lead">請求書・領収書のPDFや画像を「日付_取引先_金額」の形式にまとめて変換し、検索簿CSVも出力します。ファイルはお使いのブラウザ内でのみ処理され、外部へ送信されません。</p>
+  <div id="drop" class="drop">
+    <p>ここにファイルをドラッグ&amp;ドロップ</p>
+    <label class="btn">ファイルを選択<input id="picker" type="file" multiple hidden></label>
+  </div>
+  <p id="warn" class="ng" role="alert"></p>
+  <div id="table-wrap" hidden>
+    <div class="bar"><span id="count"></span>
+      <span><button id="dl-csv" class="btn">検索簿CSV</button> <button id="dl-zip" class="btn primary">リネーム済みZIP</button></span></div>
+    <div class="scroll"><table>
+      <thead><tr><th>元のファイル名</th><th>取引年月日</th><th>取引先</th><th>金額(円)</th><th>新しいファイル名</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+  </div>
+  <section class="note">
+    <h2>ご利用上の注意</h2>
+    <ul>
+      <li>本ツールはファイル名の整形を補助するもので、電子帳簿保存法への適合を保証するものではありません。実際の運用は税理士・所轄税務署等にご確認ください。</li>
+      <li>日付は 2026-04-01 / 2026/4/1 / 20260401 / 全角数字に対応します。</li>
+      <li>同名になる場合は _2, _3 を付与します。</li>
+    </ul>
+  </section>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>
