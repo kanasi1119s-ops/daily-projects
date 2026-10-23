@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>フリーランス取引条件明示書ジェネレーター</title>
+<style>
+  body{font-family:system-ui,sans-serif;max-width:860px;margin:0 auto;padding:16px;line-height:1.6;color:#222}
+  label{display:block;margin:10px 0 2px;font-weight:600}
+  input,textarea,select{width:100%;padding:8px;box-sizing:border-box;font:inherit}
+  pre{white-space:pre-wrap;background:#f5f5f5;padding:12px;border-radius:6px}
+  .err{color:#b00020}.warn{color:#8a5a00}
+  button{padding:8px 16px;margin-right:8px}
+  .note{font-size:.85rem;color:#555}
+  @media print{form,.noprint{display:none}}
+</style>
+</head>
+<body>
+<h1>フリーランス取引条件明示書ジェネレーター</h1>
+<p class="note noprint">入力内容はお使いのブラウザ内でのみ処理され、サーバーへ送信されません。本ツールは法的助言ではありません。</p>
+<form id="f" autocomplete="off">
+  <label for="clientName">発注事業者の名称</label><input id="clientName" name="clientName">
+  <label for="freelancerName">フリーランスの名称</label><input id="freelancerName" name="freelancerName">
+  <label for="orderDate">業務委託をした日</label><input id="orderDate" name="orderDate" type="date">
+  <label for="description">業務(給付)の内容</label><textarea id="description" name="description" rows="3"></textarea>
+  <label for="deliveryDate">受領/役務提供の期日</label><input id="deliveryDate" name="deliveryDate" type="date">
+  <label for="deliveryPlace">受領/提供の場所</label><input id="deliveryPlace" name="deliveryPlace" placeholder="例: 電子納品(メール)">
+  <label for="inspection">検査</label>
+  <select id="inspection" name="inspection"><option value="no">なし</option><option value="yes">あり</option></select>
+  <label for="inspectionDate">検査完了日(検査ありの場合)</label><input id="inspectionDate" name="inspectionDate" type="date">
+  <label for="feeUndetermined">報酬額</label>
+  <select id="feeUndetermined" name="feeUndetermined"><option value="no">確定している</option><option value="yes">未定</option></select>
+  <label for="fee">報酬の額(円・整数)</label><input id="fee" name="fee" inputmode="numeric">
+  <label for="feeCalc">算定方法(未定の場合)</label><input id="feeCalc" name="feeCalc">
+  <label for="taxNote">税の扱い(任意)</label><input id="taxNote" name="taxNote" placeholder="例: 税込">
+  <label for="paymentDue">報酬の支払期日</label><input id="paymentDue" name="paymentDue" type="date">
+  <label for="paymentMethod">支払方法</label><input id="paymentMethod" name="paymentMethod" value="銀行振込">
+  <label for="notes">備考(任意)</label><textarea id="notes" name="notes" rows="2"></textarea>
+</form>
+<ul id="msgs"></ul>
+<h2>生成結果</h2>
+<pre id="out"></pre>
+<p class="noprint"><button id="copy" type="button">コピー</button><button id="print" type="button">印刷/PDF保存</button></p>
+<script src="src/core.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
