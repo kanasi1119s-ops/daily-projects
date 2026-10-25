@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>消費税 納税方式かんたん比較</title>
+<meta name="description" content="原則課税・簡易課税・2割特例・3割特例の納税額をブラウザ上で比較。入力内容は外部に送信されません。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>消費税 納税方式かんたん比較</h1>
+  <p class="lead">個人事業主向け。原則課税・簡易課税・2割/3割特例の納税額を並べて比較します。入力値はこの端末内でのみ計算され、送信・保存されません。</p>
+</header>
+<main>
+  <section aria-labelledby="in">
+    <h2 id="in">1. 年間の金額(税込・円)</h2>
+    <div class="grid">
+      <label>課税売上 標準税率10%<input id="sales10" type="number" min="0" step="1" value="8000000" inputmode="numeric"></label>
+      <label>課税売上 軽減税率8%<input id="sales8" type="number" min="0" step="1" value="0" inputmode="numeric"></label>
+      <label>課税仕入 10%(適格請求書あり)<input id="purchase10" type="number" min="0" step="1" value="1500000" inputmode="numeric"></label>
+      <label>課税仕入 8%(適格請求書あり)<input id="purchase8" type="number" min="0" step="1" value="0" inputmode="numeric"></label>
+    </div>
+    <label>事業区分(簡易課税のみなし仕入率)
+      <select id="category"></select>
+    </label>
+    <h2>2. 適用できる方式</h2>
+    <fieldset>
+      <legend class="sr-only">適用可否</legend>
+      <label class="chk"><input type="checkbox" id="twenty" checked> 2割特例(令和8年分まで・免税事業者から登録した個人)</label>
+      <label class="chk"><input type="checkbox" id="thirty"> 3割特例(令和9・10年分・要最新情報確認)</label>
+      <label class="chk"><input type="checkbox" id="simplified" checked> 簡易課税(届出済み/届出予定・基準期間5,000万円以下)</label>
+    </fieldset>
+  </section>
+  <section aria-labelledby="out">
+    <h2 id="out">結果</h2>
+    <p id="summary" role="status" aria-live="polite"></p>
+    <div class="tablewrap"><table id="result"><thead><tr><th>方式</th><th>納付税額(目安)</th><th>国税</th><th>地方消費税</th></tr></thead><tbody></tbody></table></div>
+    <h2>仕入率が変わると?</h2>
+    <p class="note">売上に対する課税仕入の割合を変えた場合の納付税額です。</p>
+    <div class="tablewrap"><table id="sens"><thead></thead><tbody></tbody></table></div>
+  </section>
+  <section aria-labelledby="cl">
+    <h2 id="cl">届出・確認チェックリスト</h2>
+    <ul id="checklist"></ul>
+  </section>
+</main>
+<footer>
+  <p><strong>免責:</strong> 本ツールは概算の参考情報であり、税務上の助言ではありません。事業区分が複数ある場合、中間納付、非課税売上・貸倒れ・端数処理の個別事情は考慮していません。制度は改正されることがあるため、必ず<a href="https://www.nta.go.jp/" rel="noopener noreferrer">国税庁</a>の最新情報または税理士にご確認ください。</p>
+</footer>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
