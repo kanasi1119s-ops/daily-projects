@@ -1,0 +1,12 @@
+{
+  "name": "torihiki-note",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "フリーランス法の取引条件明示(第3条)・支払期日(第4条)を確認しながら取引条件通知書を作るブラウザ完結ツール",
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "build": "node scripts/build.js",
+    "start": "node scripts/serve.js"
+  }
+}

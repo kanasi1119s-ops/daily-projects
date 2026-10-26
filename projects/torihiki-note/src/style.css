@@ -1,0 +1,27 @@
+:root { --bg:#fafaf7; --fg:#1f2328; --muted:#5b6470; --line:#d6d9de; --err:#b3261e; --warn:#8a5a00; --ok:#1b6e3c; --card:#fff; --accent:#1f5fbf; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#14161a; --fg:#e8eaed; --muted:#a0a8b3; --line:#343a42; --err:#ff8a80; --warn:#f2c94c; --ok:#6fcf97; --card:#1c1f24; --accent:#8ab4f8; }
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.7 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif; }
+header, main, footer { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+h1 { margin: 24px 0 4px; font-size: 1.6rem; }
+h2 { font-size: 1.1rem; margin: 24px 0 8px; }
+.privacy { color: var(--ok); font-size: .9rem; }
+main { display: grid; gap: 24px; grid-template-columns: 1fr; }
+@media (min-width: 800px) { main { grid-template-columns: 1fr 1fr; align-items: start; } }
+fieldset { background:var(--card); border:1px solid var(--line); border-radius:8px; margin:0 0 16px; padding:8px 16px 16px; }
+legend { font-weight:600; padding:0 6px; }
+label { display:block; margin-top:12px; font-size:.92rem; }
+input:not([type=checkbox]), textarea { display:block; width:100%; margin-top:4px; padding:8px; font:inherit; color:inherit; background:var(--bg); border:1px solid var(--line); border-radius:6px; }
+label.check { display:flex; gap:8px; align-items:center; }
+#result div { padding:8px 12px; border-left:4px solid; margin:6px 0; background:var(--card); }
+.err { border-color:var(--err); color:var(--err); } .warn { border-color:var(--warn); color:var(--warn); } .info { border-color:var(--accent); color:var(--fg); } .ok { border-color:var(--ok); color:var(--ok); }
+pre { white-space:pre-wrap; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px; min-height:4em; }
+button { font:inherit; padding:8px 16px; border-radius:6px; border:1px solid var(--accent); background:var(--accent); color:#fff; cursor:pointer; }
+button:disabled { opacity:.45; cursor:not-allowed; }
+.actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+footer { color:var(--muted); font-size:.85rem; margin-top:32px; padding-bottom:32px; }
+@media print { header, form, .actions, footer, h2, #result, #acts { display:none !important; } pre { border:none; } }
+[hidden] { display: none !important; }
+a { color: var(--accent); }

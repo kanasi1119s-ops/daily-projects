@@ -1,0 +1,18 @@
+name: torihiki-note
+on:
+  push:
+    paths: ['projects/torihiki-note/**', '.github/workflows/torihiki-note.yml']
+  pull_request:
+    paths: ['projects/torihiki-note/**']
+defaults:
+  run:
+    working-directory: projects/torihiki-note
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm test
+      - run: npm run build
