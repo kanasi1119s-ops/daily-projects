@@ -11,10 +11,17 @@
 
   function floorYen(n) { return Math.floor(n + 1e-9); }
 
+  var MAX = 1e13;
+  // 文字列は10進数のみ許可（'0x10' や '1e3' を弾く）
+  function toNum(v) {
+    if (typeof v === 'string') return /^\d+(\.\d+)?$/.test(v.trim()) ? Number(v) : NaN;
+    return Number(v);
+  }
+
   function validate(input) {
-    var s = Number(input.sales), p = Number(input.purchases);
-    if (!isFinite(s) || s < 0) return '課税売上は0以上の数値で入力してください';
-    if (!isFinite(p) || p < 0) return '課税仕入は0以上の数値で入力してください';
+    var s = toNum(input.sales), p = toNum(input.purchases);
+    if (!isFinite(s) || s < 0 || s > MAX) return '課税売上は0以上10兆円以下の数値で入力してください';
+    if (!isFinite(p) || p < 0 || p > MAX) return '課税仕入は0以上の数値で入力してください';
     if (!DEEMED[input.category]) return '事業区分が不正です';
     return null;
   }
@@ -23,7 +30,7 @@
   function compare(input) {
     var err = validate(input);
     if (err) return { error: err };
-    var s = Number(input.sales), p = Number(input.purchases);
+    var s = Math.floor(toNum(input.sales)), p = Math.floor(toNum(input.purchases));
     var cat = Number(input.category);
     var results = [];
 
@@ -42,7 +49,7 @@
 
     var twenty = input.period !== 'from2027';
     results.push({ key: 'twenty', name: '課税事業者（2割特例）', tax: floorYen(s * RATE * 0.2), available: twenty,
-      note: twenty ? 'インボイス登録で免税から課税になった事業者向けの経過措置です。適用可否は国税庁で要確認。'
+      note: twenty ? 'インボイス登録で免税から課税になった事業者向けの経過措置です。基準期間の課税売上1,000万円以下などの要件があり、適用可否は国税庁で要確認。'
                    : '経過措置の対象期間外（2027年以降の課税期間）として扱っています。' });
 
     results.forEach(function (r) { r.takeHome = s - p - r.tax; });

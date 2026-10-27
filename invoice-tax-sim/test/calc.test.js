@@ -21,3 +21,10 @@ console.log('all tests passed');
 assert.strictEqual(compare({ sales: 10000000, purchases: 3000000, category: 5, period: 'upto2026' }).best, 'twenty');
 assert.strictEqual(compare({ sales: 10000000, purchases: 3000000, category: 5, period: 'from2027' }).best, 'simple');
 console.log('round1 ok');
+// round2: 入力検証と端数
+assert.ok(compare({ sales: '0x10', purchases: 0, category: 1 }).error);
+assert.ok(compare({ sales: '1e3', purchases: 0, category: 1 }).error);
+assert.ok(compare({ sales: 1e14, purchases: 0, category: 1 }).error);
+assert.strictEqual(by(compare({ sales: '1000000', purchases: '0', category: '5' }), 'simple').tax, 50000);
+assert.strictEqual(by(compare({ sales: 1000000.9, purchases: 0, category: 5 }), 'twenty').tax, 20000);
+console.log('round2 ok');
