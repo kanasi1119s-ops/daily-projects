@@ -19,9 +19,9 @@ th:first-child,td:first-child{text-align:left}
 <h1>インボイス登録 納税額シミュレーター</h1>
 <p class="note">年間の課税売上・課税仕入（税抜）から、免税のまま／本則課税／簡易課税／2割特例の概算納税額を比較します。入力内容は端末内でのみ計算され、送信されません。</p>
 <label for="sales">年間課税売上（税抜・円）</label>
-<input id="sales" type="number" min="0" inputmode="numeric" value="10000000">
+<input id="sales" type="number" min="0" step="1" inputmode="numeric" value="10000000">
 <label for="purchases">年間課税仕入（税抜・円）</label>
-<input id="purchases" type="number" min="0" inputmode="numeric" value="3000000">
+<input id="purchases" type="number" min="0" step="1" inputmode="numeric" value="3000000">
 <label for="category">事業区分（簡易課税）</label>
 <select id="category"></select>
 <label for="period">課税期間</label>
@@ -64,6 +64,8 @@ th:first-child,td:first-child{text-align:left}
       tb.appendChild(tr);
     });
     var b=r.results.filter(function(x){return x.key===r.best})[0];
+    var taxed=r.results.filter(function(x){return x.available&&x.key!=='exempt'});
+    if(taxed.every(function(x){return x.tax===taxed[0].tax})){best.textContent='課税事業者の各方式で概算納税額に差はありません。';return;}
     best.textContent='課税事業者になる場合、この入力では「'+b.name+'」の概算納税額が最小です。';
   }
   ['sales','purchases','category','period'].forEach(function(id){document.getElementById(id).addEventListener('input',render)});
