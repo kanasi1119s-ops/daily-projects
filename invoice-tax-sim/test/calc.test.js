@@ -1,0 +1,23 @@
+const assert = require('assert');
+const { compare } = require('../src/calc');
+const by = (r, k) => r.results.find(x => x.key === k);
+let r = compare({ sales: 10000000, purchases: 3000000, category: 5, period: 'upto2026' });
+assert.strictEqual(by(r, 'honsoku').tax, 700000);
+assert.strictEqual(by(r, 'simple').tax, 500000);
+assert.strictEqual(by(r, 'twenty').tax, 200000);
+assert.strictEqual(by(r, 'exempt').tax, 0);
+assert.strictEqual(by(r, 'twenty').takeHome, 6800000);
+r = compare({ sales: 10000000, purchases: 3000000, category: 5, period: 'from2027' });
+assert.strictEqual(by(r, 'twenty').available, false);
+r = compare({ sales: 60000000, purchases: 1, category: 1, period: 'from2027' });
+assert.strictEqual(by(r, 'simple').available, false);
+r = compare({ sales: 1000000, purchases: 5000000, category: 4, period: 'from2027' });
+assert.ok(by(r, 'honsoku').tax < 0);
+assert.ok(compare({ sales: -1, purchases: 0, category: 1 }).error);
+assert.ok(compare({ sales: 'abc', purchases: 0, category: 1 }).error);
+assert.ok(compare({ sales: 1, purchases: 0, category: 9 }).error);
+console.log('all tests passed');
+// round1: best は課税事業者の方式のみから選ぶ
+assert.strictEqual(compare({ sales: 10000000, purchases: 3000000, category: 5, period: 'upto2026' }).best, 'twenty');
+assert.strictEqual(compare({ sales: 10000000, purchases: 3000000, category: 5, period: 'from2027' }).best, 'simple');
+console.log('round1 ok');
