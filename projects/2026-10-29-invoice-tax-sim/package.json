@@ -1,0 +1,13 @@
+{
+  "name": "invoice-tax-sim",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "個人事業主向け 消費税 納税額比較シミュレーター（3割特例/簡易課税/本則）",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/serve.mjs"
+  },
+  "license": "MIT"
+}

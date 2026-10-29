@@ -1,0 +1,16 @@
+name: invoice-tax-sim CI
+on:
+  push:
+    paths: ["projects/2026-10-29-invoice-tax-sim/**"]
+defaults:
+  run:
+    working-directory: projects/2026-10-29-invoice-tax-sim
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm test
+      - run: npm run build
