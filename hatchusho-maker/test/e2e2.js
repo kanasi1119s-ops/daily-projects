@@ -1,0 +1,21 @@
+const { chromium } = require('playwright'); const path = require('path');
+(async () => {
+  const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 375, height: 800 } });
+  const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => { errs.push('dialog:' + d.message()); d.dismiss(); });
+  await p.goto('file://' + path.resolve(__dirname, '../index.html'));
+  console.log('hscroll:', await p.evaluate(() => document.documentElement.scrollWidth > innerWidth));
+  await p.fill('#clientName', '<img src=x onerror=alert(1)>'); await p.fill('#freelancerName', 'B');
+  await p.fill('#orderDate', '2026-11-01'); await p.fill('#deliveryDate', '2026-11-15'); await p.fill('#paymentDueDate', '2027-03-01');
+  await p.fill('#deliveryPlace', 'x'); await p.fill('#workDescription', 'w');
+  await p.fill('.in', 'h'); await p.fill('.iq', '1.5'); await p.fill('.ip', '3000');
+  await p.check('#hasInspection'); await p.selectOption('#paymentMethod', 'other');
+  await p.click('button[type=submit]');
+  console.log('msg:', (await p.textContent('#msg')).replace(/\s+/g, ' '));
+  await p.fill('#inspectionDate', '2026-11-20'); await p.fill('#paymentMethodNote', '電子マネー'); await p.fill('#paymentDueDate', '2026-12-20');
+  await p.click('button[type=submit]');
+  const t = await p.textContent('#preview'); console.log('has 4,950:', t.includes('¥4,950'), 'inspection:', t.includes('検査完了日'), 'img injected:', await p.locator('#preview img').count());
+  await p.emulateMedia({ media: 'print' });
+  console.log('form hidden in print:', !(await p.isVisible('#f')), 'preview visible:', await p.isVisible('#preview'));
+  await p.pdf({ path: '/tmp/claude-0/-home-user-daily-projects/3cc53fd9-fea5-57f7-b234-eb3fbe742b92/scratchpad/o.pdf' });
+  console.log('errors:', errs); await b.close();
+})();

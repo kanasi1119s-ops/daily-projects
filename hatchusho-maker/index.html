@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>発注書メーカー(フリーランス新法 取引条件明示)</title>
+<style>
+:root{--bg:#f6f7f9;--fg:#1d2330;--card:#fff;--ac:#2557d6;--er:#c0392b;--wn:#a66a00}
+@media(prefers-color-scheme:dark){:root{--bg:#14171f;--fg:#e8eaf0;--card:#1e222d;--ac:#7aa2ff;--er:#ff7b6b;--wn:#ffc15a}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:10px;padding:16px;margin:12px 0}
+label{display:block;margin:10px 0 2px;font-weight:600;font-size:14px}
+input,textarea,select{width:100%;box-sizing:border-box;padding:8px;font:inherit;color:inherit;background:transparent;border:1px solid #8886;border-radius:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.item{display:grid;grid-template-columns:3fr 1fr 1.5fr auto;gap:6px;margin:6px 0}
+button{padding:8px 14px;font:inherit;border-radius:6px;border:0;background:var(--ac);color:#fff;cursor:pointer}
+button.sub{background:#8885;color:var(--fg)}
+.er{color:var(--er)}.wn{color:var(--wn)}
+.note{font-size:13px;opacity:.8}
+#preview{background:#fff;color:#000;padding:24px;border-radius:6px}
+#preview table{width:100%;border-collapse:collapse;margin:12px 0}
+#preview th,#preview td{border:1px solid #999;padding:6px;text-align:left}
+#preview .n{text-align:right}#preview .r{text-align:right}#preview .s{font-size:12px}
+#preview .kv th{width:30%;background:#eee}
+@media print{body{background:#fff}main>*:not(#out){display:none!important}#out .card{padding:0}#out .noprint{display:none}}
+</style></head><body><main>
+<h1>発注書メーカー</h1>
+<p class="note">フリーランス新法の取引条件の明示に必要な項目を入力して、発注書を作成・印刷(PDF保存)できます。入力内容はこのブラウザ内でのみ処理され、サーバーには送信されません。法的助言ではありません。公開前に必ず公正取引委員会等の一次情報をご確認ください。</p>
+<form id="f" class="card" autocomplete="off">
+<div class="grid">
+<div><label for="clientName">発注事業者の名称 *</label><input id="clientName"></div>
+<div><label for="freelancerName">フリーランスの名称 *</label><input id="freelancerName"></div>
+<div><label for="clientAddress">発注事業者の住所</label><input id="clientAddress"></div>
+<div><label for="clientInvoiceNo">登録番号(T+13桁・任意)</label><input id="clientInvoiceNo" placeholder="T1234567890123"></div>
+<div><label for="orderDate">発注日 *</label><input id="orderDate" type="date"></div>
+<div><label for="deliveryDate">納期 *</label><input id="deliveryDate" type="date"></div>
+<div><label for="paymentDueDate">報酬の支払期日 *</label><input id="paymentDueDate" type="date"></div>
+<div><label for="deliveryPlace">納品場所 *</label><input id="deliveryPlace" placeholder="例: メールにて電子納品"></div>
+</div>
+<label for="workDescription">業務の内容 *</label><textarea id="workDescription" rows="3"></textarea>
+<label>報酬の明細 *</label><div id="items"></div>
+<button type="button" class="sub" id="add">+ 行を追加</button>
+<label><input type="checkbox" id="hasInspection" style="width:auto"> 検査がある</label>
+<div id="insp" hidden><label for="inspectionDate">検査完了日</label><input id="inspectionDate" type="date"></div>
+<label for="paymentMethod">支払方法</label>
+<select id="paymentMethod"><option value="cash">現金(銀行振込)</option><option value="other">現金以外</option></select>
+<div id="pmn" hidden><label for="paymentMethodNote">現金以外の支払方法の詳細</label><input id="paymentMethodNote"></div>
+<label for="notes">その他の取引条件</label><textarea id="notes" rows="2"></textarea>
+<p><button type="submit">発注書を作成</button></p>
+</form>
+<div id="msg" class="card" hidden></div>
+<div id="out" class="card" hidden><div id="preview"></div><p class="noprint"><button id="print" type="button">印刷 / PDF保存</button></p></div>
+</main>
+<script src="src/lib.js"></script>
+<script src="src/app.js"></script>
+</body></html>
