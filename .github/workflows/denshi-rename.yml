@@ -1,0 +1,14 @@
+name: denshi-rename
+on:
+  push: { paths: ['denshi-rename/**'] }
+  pull_request: { paths: ['denshi-rename/**'] }
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: denshi-rename } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm test
+      - run: npm run build

@@ -1,0 +1,11 @@
+{
+  "name": "denshi-rename",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "build": "node scripts/build.mjs",
+    "start": "npx --yes http-server dist -p 8080"
+  }
+}
