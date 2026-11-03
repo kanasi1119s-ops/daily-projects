@@ -17,6 +17,7 @@ ok((await p.locator("#rows tr").count()) === 3, "R9は3行");
 await p.fill("[name=sales]", "");
 await p.click("button[type=submit]");
 ok(await p.isVisible("#err") && !(await p.isVisible("#out")), "空入力でエラー");
+await p.fill("[name=sales]", "100"); ok(!(await p.isVisible("#out")), "入力変更で古い結果が消える");
 await p.fill("[name=sales]", "-5");
 await p.click("button[type=submit]");
 ok(await p.isVisible("#err"), "負数でエラー");

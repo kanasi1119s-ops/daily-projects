@@ -72,3 +72,8 @@ test("formatYen", () => {
   assert.equal(formatYen(1234567), "¥1,234,567");
   assert.equal(formatYen(-5), "−¥5");
 });
+
+test("法人の2割特例注記", () => {
+  const r = calculate({ ...base, isIndividual: false });
+  assert.match(get(r, "nitowari").note, /法人/);
+});

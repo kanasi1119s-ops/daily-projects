@@ -53,3 +53,6 @@ f.addEventListener("submit", (ev) => {
     $("out").hidden = true;
   }
 });
+
+// 入力が変わったら古い結果を隠す（再計算前の結果を誤読させない）
+f.addEventListener("input", () => { $("out").hidden = true; });

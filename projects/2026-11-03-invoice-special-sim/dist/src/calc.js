@@ -21,9 +21,12 @@ export const TAX_YEARS = {
   R11: "令和11年分以降",
 };
 
+const MAX_YEN = 1_000_000_000_000; // 1兆円（Number精度の安全圏）
+
 function toInt(v, name) {
   const n = Number(v);
   if (!Number.isFinite(n) || n < 0) throw new RangeError(`${name} は0以上の数値を入力してください`);
+  if (n > MAX_YEN) throw new RangeError(`${name} は${MAX_YEN.toLocaleString("ja-JP")}円以下で入力してください`);
   return Math.floor(n);
 }
 
@@ -79,7 +82,9 @@ export function calculate(i) {
       eligible: ok,
       tax: Math.floor(salesTax * 0.2),
       note: ok
-        ? "売上税額の20%を納付。届出不要（申告書への付記）。令和8年分が最後。"
+        ? i.isIndividual
+          ? "売上税額の20%を納付。届出不要（申告書への付記）。個人は令和8年分が最後。"
+          : "売上税額の20%を納付。法人は令和8年9月30日を含む課税期間が最後（決算月により異なる）。"
         : !i.registeredFromExempt
           ? "インボイス登録を機に課税事業者になった方が対象です。"
           : "基準期間の課税売上高が1,000万円を超えるため利用不可。",
