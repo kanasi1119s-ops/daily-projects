@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>インボイス特例 比較シミュレーター｜2割特例終了後の消費税を比較</title>
+<meta name="description" content="2割特例終了後の3割特例・簡易課税・本則課税の消費税納付額を無料で比較。入力データは送信されずブラウザ内だけで計算します。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><h1>インボイス特例 比較シミュレーター</h1>
+<p class="lead">2割特例（令和8年分まで）→ 3割特例（個人・令和9・10年分）・簡易課税・本則課税の納付額を比較します。入力内容はブラウザ内のみで計算され、送信・保存されません。</p></header>
+<main>
+<form id="f" novalidate>
+  <label>対象年
+    <select name="taxYear" id="taxYear"></select></label>
+  <label>課税売上（税抜・年額・円）
+    <input name="sales" type="number" inputmode="numeric" min="0" step="1" value="5000000" required></label>
+  <label>課税仕入（税抜・年額・円）
+    <input name="purchases" type="number" inputmode="numeric" min="0" step="1" value="1000000" required></label>
+  <label>基準期間（2年前）の課税売上高（円）
+    <input name="baseYearSales" type="number" inputmode="numeric" min="0" step="1" value="4000000" required></label>
+  <label>簡易課税の事業区分
+    <select name="businessType" id="businessType"></select></label>
+  <label class="chk"><input type="checkbox" name="isIndividual" checked> 個人事業者である</label>
+  <label class="chk"><input type="checkbox" name="registeredFromExempt" checked> インボイス登録を機に課税事業者になった</label>
+  <button type="submit">比較する</button>
+</form>
+<p id="err" role="alert" class="err" hidden></p>
+<section id="out" aria-live="polite" hidden>
+  <h2>結果</h2>
+  <p id="summary" class="summary"></p>
+  <table><thead><tr><th>方式</th><th>納付税額（目安）</th><th>備考</th></tr></thead><tbody id="rows"></tbody></table>
+  <p id="hint" class="hint"></p>
+</section>
+</main>
+<footer>
+<p><strong>ご注意</strong>：本ツールは一般的な目安を示すもので、税務上の助言ではありません。標準税率10%のみ対応（軽減税率8%・個別対応/一括比例配分・端数処理の細部は未対応）。税制は改正されるため、実際の判断は国税庁の最新情報または税理士にご確認ください。</p>
+</footer>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

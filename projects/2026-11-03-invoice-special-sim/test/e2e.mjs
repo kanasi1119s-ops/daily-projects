@@ -1,0 +1,28 @@
+// 実行: npm run build && node test/e2e.mjs （Playwright が必要）
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const { chromium } = require("playwright");
+import { spawn } from "node:child_process";
+const srv = spawn("node", ["scripts/serve.mjs", "dist"], { env: { ...process.env, PORT: "8099" } });
+await new Promise((r) => setTimeout(r, 500));
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 375, height: 800 } });
+const errs = []; p.on("pageerror", (e) => errs.push(e.message)); p.on("console", (m) => m.type() === "error" && errs.push(m.text()));
+let fail = 0; const ok = (c, m) => { if (!c) { fail++; console.log("FAIL", m); } else console.log("ok  ", m); };
+await p.goto("http://localhost:8099/");
+await p.click("button[type=submit]");
+ok(await p.isVisible("#out"), "結果表示");
+ok((await p.locator("tr.best").innerText()).includes("3割特例"), "R9既定で3割特例が最安");
+ok((await p.locator("#rows tr").count()) === 3, "R9は3行");
+await p.fill("[name=sales]", "");
+await p.click("button[type=submit]");
+ok(await p.isVisible("#err") && !(await p.isVisible("#out")), "空入力でエラー");
+await p.fill("[name=sales]", "-5");
+await p.click("button[type=submit]");
+ok(await p.isVisible("#err"), "負数でエラー");
+await p.fill("[name=sales]", "5000000"); await p.selectOption("#taxYear", "R8");
+await p.click("button[type=submit]");
+ok((await p.locator("tr.best").innerText()).includes("2割特例"), "R8は2割特例");
+ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "横スクロールなし(375px)");
+ok(errs.length === 0, "コンソールエラーなし " + errs.join("|"));
+await b.close(); srv.kill(); process.exit(fail ? 1 : 0);
