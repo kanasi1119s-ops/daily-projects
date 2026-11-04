@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SubScan - 明細CSVからサブスクを見つける</title>
+<meta name="description" content="カード・銀行の明細CSVを読み込むだけで、毎月/毎年の定期支払いを自動検出。データはブラウザ内だけで処理され、外部へ送信されません。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><h1>SubScan</h1><p>明細CSVから「忘れているサブスク」を見つける</p></header>
+<main>
+  <section class="card" id="drop">
+    <h2>1. 明細CSVを選ぶ</h2>
+    <p class="note">🔒 ファイルはこのブラウザ内でのみ処理され、サーバーへ送信されません。</p>
+    <input type="file" id="file" accept=".csv,.txt,.tsv">
+    <button id="sample" type="button">サンプルで試す</button>
+    <p id="msg" role="status"></p>
+    <details id="colbox" hidden>
+      <summary>列の割り当てを手動で変更</summary>
+      <label>日付 <select id="c-date"></select></label>
+      <label>内容 <select id="c-desc"></select></label>
+      <label>金額 <select id="c-amt"></select></label>
+      <button id="reapply" type="button">再解析</button>
+    </details>
+  </section>
+  <section class="card" id="result" hidden>
+    <h2>2. 検出された定期支払い</h2>
+    <p id="summary"></p>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>サービス</th><th>周期</th><th>金額</th><th>年間</th><th>次回目安</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <button id="ics" type="button">選択した項目の解約検討リマインダー(.ics)を保存</button>
+    <p class="note">※ 検出は明細の規則性に基づく推定です。誤検出・見逃しがあり得ます。解約は各サービスの公式ページで行ってください。</p>
+  </section>
+</main>
+<footer>SubScan MVP · 家計に関する助言・保証を行うものではありません</footer>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
