@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>消費税 課税方式かんたん比較</title>
+<meta name="description" content="本則課税・簡易課税・2割特例の納税額をブラウザ内で比較。入力データは送信されません。">
+<style>
+:root{--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--ac:#2563eb;--mut:#667085;--ok:#047857;--bd:#d9dee7}
+@media(prefers-color-scheme:dark){:root{--bg:#10141b;--fg:#e6e9ef;--card:#1a212c;--ac:#6ea0ff;--mut:#9aa4b5;--ok:#34d399;--bd:#2c3646}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:720px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin:12px 0}
+label{display:block;font-weight:600;margin-top:12px}input,select{width:100%;padding:10px;font-size:16px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg)}
+.row{display:flex;gap:8px;align-items:center;margin-top:12px}.row input{width:auto}.row label{margin:0;font-weight:400}
+table{width:100%;border-collapse:collapse}th,td{padding:8px;border-bottom:1px solid var(--bd);text-align:right}th:first-child,td:first-child{text-align:left}
+.best{color:var(--ok);font-weight:700}.na{color:var(--mut)}td:last-child{white-space:nowrap}.best small{font-weight:400}small,.note{color:var(--mut);font-size:13px}
+h1{font-size:22px}
+</style>
+</head>
+<body>
+<main>
+<h1>消費税 課税方式かんたん比較</h1>
+<p class="note">本則課税・簡易課税・2割特例の概算納税額を比較します。入力内容はこのブラウザ内でのみ計算され、送信・保存されません。</p>
+<form id="f" class="card" novalidate>
+  <label for="sales">課税売上(税込・年間・円)</label>
+  <input id="sales" inputmode="numeric" value="8000000">
+  <label for="purchases">課税仕入(税込・適格請求書あり・年間・円)</label>
+  <input id="purchases" inputmode="numeric" value="2000000">
+  <label for="base">基準期間(2年前)の課税売上高(税抜・円)</label>
+  <input id="base" inputmode="numeric" value="6000000">
+  <label for="cat">簡易課税の事業区分</label>
+  <select id="cat">
+    <option value="1">第1種 卸売業(90%)</option><option value="2">第2種 小売業(80%)</option>
+    <option value="3">第3種 製造業等(70%)</option><option value="4">第4種 その他(60%)</option>
+    <option value="5">第5種 サービス業等(50%)</option><option value="6" selected>第6種 不動産業(40%)</option>
+  </select>
+  <div class="row"><input type="checkbox" id="tw" checked><label for="tw">2割特例の対象期間・対象者である(免税事業者から登録した事業者・2026年分以前)</label></div>
+</form>
+<div class="card" aria-live="polite">
+  <table><thead><tr><th>方式</th><th>概算納税額</th></tr></thead><tbody id="out"></tbody></table>
+  <p id="sum" class="note"></p>
+</div>
+<div class="card note">
+  <strong>ご注意</strong>
+  <ul>
+    <li>税率10%のみ対応。軽減税率(8%)、非適格仕入の経過措置、中間納付、地方消費税の内訳は考慮していません。</li>
+    <li>参考用の概算であり、税務上の助言ではありません。実際の判断は国税庁の情報や税理士にご確認ください。</li>
+    <li>簡易課税の選択には事前の届出が必要です。</li>
+  </ul>
+</div>
+</main>
+<script src="calc.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var yen=function(n){return n<0?'還付見込 '+(-n).toLocaleString('ja-JP')+'円':n.toLocaleString('ja-JP')+'円'};
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+  function render(){
+    var bad=['sales','purchases','base'].filter(function(i){return isNaN(TaxCalc.parseAmount($(i).value))});
+    ['sales','purchases','base'].forEach(function(i){$(i).setAttribute('aria-invalid',bad.indexOf(i)>=0)});
+    if(bad.length){$('out').innerHTML='';$('sum').textContent='整数の数字(半角・全角可、10兆円以下)で入力してください。小数・マイナス・文字は使えません。';return}
+    var r=TaxCalc.simulate({sales:$('sales').value,purchases:$('purchases').value,baseSales:$('base').value,category:$('cat').value,twentyEligible:$('tw').checked});
+    var h='';
+    r.results.forEach(function(x){
+      h+='<tr class="'+(x.available?(x.key===r.best?'best':''):'na')+'"><td>'+esc(x.label)+(x.note?'<br><small>'+esc(x.note)+'</small>':'')+'</td><td>'+(x.available?yen(x.tax):'利用不可')+'</td></tr>';
+    });
+    $('out').innerHTML=h;
+    if(r.salesTax===0&&r.purchaseTax===0){$('sum').textContent='課税売上を入力すると比較結果が表示されます。';}
+    var b=r.results.filter(function(x){return x.key===r.best})[0];
+    if(r.salesTax>0||r.purchaseTax>0)$('sum').textContent=b?('最も納税額が小さい方式: '+b.label+'(概算 '+yen(b.tax)+')'):'';
+  }
+  ['sales','purchases','base','cat','tw'].forEach(function(i){$(i).addEventListener('input',render);$(i).addEventListener('change',render)});
+  $('f').addEventListener('submit',function(e){e.preventDefault()});
+  render();
+})();
+</script>
+</body>
+</html>

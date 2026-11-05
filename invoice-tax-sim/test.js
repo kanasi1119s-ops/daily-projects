@@ -1,0 +1,14 @@
+const assert=require('assert');const C=require('./calc.js');
+let n=0;const t=(name,fn)=>{fn();n++;console.log('ok',name)};
+const get=(r,k)=>r.results.find(x=>x.key===k);
+t('basic',()=>{const r=C.simulate({sales:8000000,purchases:2000000,baseSales:6000000,category:6,twentyEligible:true});
+ assert.equal(r.salesTax,727272);assert.equal(get(r,'honsoku').tax,545454);
+ assert.equal(get(r,'twenty').tax,145454);assert.equal(get(r,'simplified').tax,436363);assert.equal(r.best,'twenty')});
+t('twenty off',()=>{const r=C.simulate({sales:8000000,purchases:2000000,baseSales:6000000,category:6,twentyEligible:false});assert.notEqual(r.best,'twenty')});
+t('simplified limit',()=>{const r=C.simulate({sales:1,purchases:0,baseSales:50000001,category:1});assert.equal(get(r,'simplified').available,false)});
+t('bad input',()=>{const r=C.simulate({sales:'abc',purchases:-5,baseSales:NaN,category:99});assert.equal(r.salesTax,0)});
+t('fullwidth/commas',()=>{assert.equal(C.parseAmount('８,０００,０００円'),8000000);assert.ok(isNaN(C.parseAmount('abc')));assert.ok(isNaN(C.parseAmount('-5')));assert.equal(C.parseAmount(''),0)});
+t('twenty needs base<=10M',()=>{const r=C.simulate({sales:8e6,purchases:0,baseSales:20000000,category:6,twentyEligible:true});assert.equal(get(r,'twenty').available,false)});
+t('refund negative & best',()=>{const r=C.simulate({sales:1e6,purchases:5e6,baseSales:6e6,category:6,twentyEligible:true});assert.ok(get(r,'honsoku').tax<0);assert.equal(r.best,'honsoku')});
+t('huge/decimal rejected',()=>{assert.ok(isNaN(C.parseAmount('1e20')));assert.ok(isNaN(C.parseAmount('99999999999999999999999')));assert.ok(isNaN(C.parseAmount('12.5')))});
+console.log(n,'passed');
