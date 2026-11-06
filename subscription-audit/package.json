@@ -1,0 +1,13 @@
+{
+  "name": "subscription-audit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "サブスク棚卸し: ブラウザ完結の定期課金管理ツール",
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/serve.mjs"
+  },
+  "license": "MIT"
+}
