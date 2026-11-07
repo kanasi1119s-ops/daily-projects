@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'self' data:; form-action 'none'; base-uri 'none'" />
+  <title>サブ減 - サブスク見直し診断</title>
+  <meta name="description" content="契約中のサブスクを入力すると、月額・年額、重複、1回あたりコストから見直し候補を診断。データは端末内のみで保存されます。" />
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>サブ減</h1>
+    <p>サブスクの「使ってない」を見える化。入力データはこの端末のブラウザ内だけに保存され、外部へ送信されません。</p>
+  </header>
+
+  <main>
+    <section aria-labelledby="add-h" class="card">
+      <h2 id="add-h">サブスクを追加</h2>
+      <form id="add-form" novalidate>
+        <label>サービス名 <input name="name" maxlength="60" required autocomplete="off" /></label>
+        <label>料金(円) <input name="price" inputmode="numeric" required autocomplete="off" /></label>
+        <label>支払い
+          <select name="cycle">
+            <option value="monthly">月払い</option>
+            <option value="quarterly">3か月払い</option>
+            <option value="yearly">年払い</option>
+          </select>
+        </label>
+        <label>カテゴリ <select name="category" id="category"></select></label>
+        <label>月の利用回数 <input name="usesPerMonth" inputmode="numeric" placeholder="例: 8(不明なら空欄)" autocomplete="off" /></label>
+        <label>年払いにした場合の年額(円・任意) <input name="annualPrice" inputmode="numeric" autocomplete="off" /></label>
+        <label class="wide">メモ(任意) <input name="note" maxlength="200" autocomplete="off" /></label>
+        <div class="wide actions">
+          <button type="submit" id="submit-btn">追加する</button>
+          <button type="button" id="cancel-edit" hidden>編集をやめる</button>
+        </div>
+        <p id="form-errors" class="errors" role="alert"></p>
+      </form>
+    </section>
+
+    <section aria-labelledby="sum-h" class="card">
+      <h2 id="sum-h">診断結果</h2>
+      <div class="summary" id="summary"></div>
+      <p id="dup-note" class="hint"></p>
+      <div class="table-wrap">
+        <table id="table">
+          <thead>
+            <tr><th>解約試算</th><th>サービス</th><th>判定</th><th>月額換算</th><th>利用1回あたり</th><th>理由</th><th>操作</th></tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <p id="empty" class="hint">まだ登録がありません。上のフォームから追加するか、サンプルを読み込んでください。</p>
+      <div id="sim" class="sim" aria-live="polite"></div>
+    </section>
+
+    <section aria-labelledby="data-h" class="card">
+      <h2 id="data-h">データ管理</h2>
+      <div class="actions">
+        <button type="button" id="sample-btn">サンプルを読み込む</button>
+        <button type="button" id="export-btn">CSVを書き出す</button>
+        <label class="file-btn">CSVを読み込む(追加) <input type="file" id="import-file" accept=".csv,text/csv" hidden /></label>
+        <button type="button" id="clear-btn" class="danger">全データを削除</button>
+      </div>
+      <p id="data-msg" class="hint" role="status"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>本ツールの判定は入力値に基づく目安であり、解約や契約変更を推奨・保証するものではありません。実際の料金・解約条件は各サービスの公式情報でご確認ください。サンプル数値はダミーです。</p>
+    <p><a href="./privacy.html">プライバシーについて</a></p>
+  </footer>
+
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>
