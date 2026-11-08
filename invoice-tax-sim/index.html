@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>インボイス 消費税 納付額シミュレーター｜本則・簡易課税・2割特例を比較</title>
+<meta name="description" content="売上と仕入を入力するだけで、本則課税・簡易課税・2割特例の納付税額（概算）を並べて比較。入力データはブラウザ内だけで処理され、送信されません。" />
+<link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+<header>
+  <h1>消費税 納付額シミュレーター</h1>
+  <p class="lead">本則課税・簡易課税・2割特例を同じ条件で並べて比較（概算）。入力内容はこの端末のブラウザ内でのみ計算され、外部へ送信されません。</p>
+</header>
+<main>
+  <form id="f" novalidate>
+    <fieldset>
+      <legend>課税売上（税込・年間）</legend>
+      <label>標準税率 10%<input type="number" name="sales10" min="0" step="1" inputmode="numeric" value="0" /></label>
+      <label>軽減税率 8%<input type="number" name="sales8" min="0" step="1" inputmode="numeric" value="0" /></label>
+    </fieldset>
+    <fieldset>
+      <legend>課税仕入（税込・年間）</legend>
+      <label>適格請求書あり 10%<input type="number" name="qualPurchase10" min="0" step="1" inputmode="numeric" value="0" /></label>
+      <label>適格請求書あり 8%<input type="number" name="qualPurchase8" min="0" step="1" inputmode="numeric" value="0" /></label>
+      <label>免税事業者等からの仕入 10%<input type="number" name="nonQualPurchase10" min="0" step="1" inputmode="numeric" value="0" /></label>
+      <label>免税事業者等からの仕入 8%<input type="number" name="nonQualPurchase8" min="0" step="1" inputmode="numeric" value="0" /></label>
+      <label>免税事業者等からの仕入の控除割合
+        <select name="transitionRate">
+          <option value="0.8">80%（〜令和8年9月30日の取引）</option>
+          <option value="0.5" selected>50%（令和8年10月1日〜令和11年9月30日の取引）</option>
+          <option value="0">0%（令和11年10月1日〜）</option>
+        </select>
+      </label>
+      <p class="hint">期間をまたぐ場合は、期間ごとに分けて計算するか、概算として近い方を選んでください。人件費・給与・租税公課・保険料など、消費税がかからない支出は含めないでください。</p>
+    </fieldset>
+    <fieldset>
+      <legend>事業の条件</legend>
+      <label>簡易課税の事業区分
+        <select name="businessType">
+          <option value="1">第1種（卸売業）90%</option>
+          <option value="2">第2種（小売業など）80%</option>
+          <option value="3">第3種（製造業・建設業など）70%</option>
+          <option value="4">第4種（飲食店業・その他）60%</option>
+          <option value="5" selected>第5種（サービス業など）50%</option>
+          <option value="6">第6種（不動産業）40%</option>
+        </select>
+      </label>
+      <label>基準期間（原則2年前）の課税売上高（税抜）<input type="number" name="baseSales" min="0" step="1" inputmode="numeric" value="0" /></label>
+      <label class="check"><input type="checkbox" name="wasExempt" checked /> インボイス登録を機に課税事業者になった（それまで免税事業者）</label>
+      <label class="check"><input type="checkbox" name="inTwentyPercentPeriod" checked /> 課税期間に令和8年9月30日までの日を含む（個人事業主は令和8年分まで）</label>
+    </fieldset>
+  </form>
+
+  <section id="result" aria-live="polite">
+    <h2>結果（概算）</h2>
+    <p id="summary"></p>
+    <table>
+      <thead><tr><th>方式</th><th class="num">納付税額</th><th>備考</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <ul id="warnings"></ul>
+  </section>
+</main>
+<footer>
+  <p>※ 本ツールは一般的な計算例を示す概算であり、税務・法律上の助言ではありません。国税と地方消費税を合算した税率で計算しており、実際の申告額（端数処理・特例・個別事情）と異なる場合があります。最終判断は税務署・税理士にご確認ください。</p>
+</footer>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
