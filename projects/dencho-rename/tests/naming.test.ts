@@ -17,4 +17,13 @@ describe('naming', () => {
     expect(buildIndexCsv(entries, buildAll(entries))).toContain("'=1+1");
   });
   it('日付推測', () => { expect(guessFromFilename('invoice_20261109.pdf').date).toBe('2026-11-09'); expect(guessFromFilename('x.pdf')).toEqual({}); });
+  it('連番が既存名と衝突しない', () => {
+    const r = buildAll([e(), e(), e({ note: '2' })], { ...defaultOptions, includeNote: true });
+    expect(new Set(r).size).toBe(3);
+  });
+  it('連番が別行の実名と衝突しない', () => {
+    const o = { ...defaultOptions, includeNote: true };
+    const r = buildAll([e({ note: 'x' }), e({ note: 'x' }), e({ note: 'x_2' })], o);
+    expect(new Set(r.map((x) => x!.toLowerCase())).size).toBe(3);
+  });
 });

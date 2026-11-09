@@ -1,0 +1,19 @@
+name: dencho-rename CI
+on:
+  push:
+    paths: ['projects/dencho-rename/**']
+  pull_request:
+    paths: ['projects/dencho-rename/**']
+defaults:
+  run:
+    working-directory: projects/dencho-rename
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: projects/dencho-rename/package-lock.json }
+      - run: npm ci
+      - run: npm test
+      - run: npm run build

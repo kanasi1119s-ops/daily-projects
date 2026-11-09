@@ -12,3 +12,4 @@ th,td{border-bottom:1px solid var(--bd);padding:4px;text-align:left}td input{wid
 button.primary{margin:16px 0;padding:10px 20px;font-size:1rem;background:var(--ac);color:var(--bg);border:0;border-radius:6px;cursor:pointer}
 button.primary:disabled{opacity:.5;cursor:not-allowed}
 footer{font-size:.8rem;margin-top:32px}
+.drop.over{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,transparent)}

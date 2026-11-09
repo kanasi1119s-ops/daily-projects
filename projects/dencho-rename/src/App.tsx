@@ -9,6 +9,8 @@ export function App() {
   const [rows, setRows] = useState<Row[]>([]);
   const [opt, setOpt] = useState<Options>(defaultOptions);
   const [busy, setBusy] = useState(false);
+  const [over, setOver] = useState(false);
+  const totalMB = rows.reduce((a, r) => a + r.file.size, 0) / 1048576;
 
   const names = useMemo(() => buildAll(rows, opt), [rows, opt]);
   const okCount = names.filter((n) => n !== null).length;
@@ -21,6 +23,12 @@ export function App() {
     setRows((r) => [...r, ...add]);
   };
   const upd = (id: number, patch: Partial<Entry>) => setRows((r) => r.map((x) => (x.id === id ? { ...x, ...patch } : x)));
+  const fillFromFirst = () =>
+    setRows((r) => {
+      if (r.length < 2) return r;
+      const f = r[0];
+      return r.map((x, i) => i === 0 ? x : { ...x, date: x.date || f.date, partner: x.partner || f.partner, amount: x.amount || f.amount, note: x.note || f.note });
+    });
   const del = (id: number) => setRows((r) => r.filter((x) => x.id !== id));
 
   const download = async () => {
@@ -47,8 +55,13 @@ export function App() {
       <p className="lead">請求書・領収書などのファイルを「取引年月日・取引先・取引金額」入りの名前に一括リネームし、索引簿CSVと一緒にZIPで保存します。</p>
       <p className="privacy">🔒 ファイルはこのブラウザの中だけで処理され、外部へ送信されません。</p>
 
-      <label className="drop">
-        ファイルを選択（複数可）
+      <label
+        className={'drop' + (over ? ' over' : '')}
+        onDragOver={(e) => { e.preventDefault(); setOver(true); }}
+        onDragLeave={() => setOver(false)}
+        onDrop={(e) => { e.preventDefault(); setOver(false); addFiles(e.dataTransfer.files); }}
+      >
+        ここにファイルをドロップ、またはクリックして選択（複数可）
         <input type="file" multiple onChange={(e) => { addFiles(e.target.files); e.target.value = ''; }} />
       </label>
 
@@ -62,6 +75,7 @@ export function App() {
         <label><input type="checkbox" checked={opt.includeNote} onChange={(e) => setOpt({ ...opt, includeNote: e.target.checked })} />メモ(書類種別等)を末尾に付ける</label>
       </fieldset>
 
+      {rows.length > 1 && <button onClick={fillFromFirst}>1行目の値を空欄の行へ反映</button>}
       {rows.length > 0 && (
         <div className="tablewrap">
           <table>
@@ -86,6 +100,7 @@ export function App() {
         </div>
       )}
 
+      {totalMB > 300 && <p className="err">合計 {Math.round(totalMB)}MB です。ブラウザのメモリ不足を避けるため、数回に分けて処理してください。</p>}
       <button className="primary" disabled={okCount === 0 || busy} onClick={download}>
         {busy ? '作成中…' : `ZIPをダウンロード（${okCount}/${rows.length}件）`}
       </button>

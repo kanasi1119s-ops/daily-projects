@@ -74,18 +74,20 @@ export function buildName(e: Entry, o: Options = defaultOptions): string | null 
   return parts.join(o.separator) + extOf(e.original);
 }
 
-/** 全件の名前を生成し、重複には連番(-2, -3...)を付与。不正行は null */
+/** 全件の名前を生成し、重複には連番(_2, _3...)を付与。不正行は null */
 export function buildAll(entries: Entry[], o: Options = defaultOptions): (string | null)[] {
-  const seen = new Map<string, number>();
-  return entries.map((e) => {
-    const base = buildName(e, o);
-    if (base === null) return null;
-    const key = base.toLowerCase();
-    const n = (seen.get(key) ?? 0) + 1;
-    seen.set(key, n);
-    if (n === 1) return base;
-    const ext = extOf(base);
-    return base.slice(0, base.length - ext.length) + `${o.separator === '_' ? '_' : '-'}${n}` + ext;
+  const base = entries.map((e) => buildName(e, o));
+  const used = new Set(base.filter((b): b is string => b !== null).map((b) => b.toLowerCase()));
+  const taken = new Set<string>();
+  return base.map((b) => {
+    if (b === null) return null;
+    if (!taken.has(b.toLowerCase())) { taken.add(b.toLowerCase()); return b; }
+    const ext = extOf(b);
+    const stem = b.slice(0, b.length - ext.length);
+    for (let n = 2; ; n++) {
+      const c = `${stem}${o.separator}${n}${ext}`;
+      if (!taken.has(c.toLowerCase()) && !used.has(c.toLowerCase())) { taken.add(c.toLowerCase()); return c; }
+    }
   });
 }
 
