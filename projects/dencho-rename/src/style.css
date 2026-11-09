@@ -1,0 +1,14 @@
+:root{--bg:#fff;--fg:#1a1a1a;--mut:#555;--bd:#ccc;--ac:#0b5cad;--er:#b00020;color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root{--bg:#161616;--fg:#eee;--mut:#aaa;--bd:#444;--ac:#6cb0f5;--er:#ff7a8a}}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,"Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem}.lead,.privacy,footer{color:var(--mut)}.privacy{font-weight:600}
+.drop{display:block;border:2px dashed var(--bd);padding:16px;border-radius:8px;margin:12px 0}
+.opts{display:flex;gap:16px;flex-wrap:wrap;border:1px solid var(--bd);border-radius:8px;margin:12px 0}
+.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{border-bottom:1px solid var(--bd);padding:4px;text-align:left}td input{width:100%;min-width:90px;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--bd);padding:4px}
+.orig{max-width:160px;overflow-wrap:anywhere}.newname{font-family:ui-monospace,monospace;overflow-wrap:anywhere}
+.err{color:var(--er)}tr.bad{background:color-mix(in srgb,var(--er) 8%,transparent)}
+button.primary{margin:16px 0;padding:10px 20px;font-size:1rem;background:var(--ac);color:var(--bg);border:0;border-radius:6px;cursor:pointer}
+button.primary:disabled{opacity:.5;cursor:not-allowed}
+footer{font-size:.8rem;margin-top:32px}
