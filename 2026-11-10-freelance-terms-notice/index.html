@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>フリーランス取引条件 明示書メーカー</title>
+<style>
+:root{--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--accent:#2563eb;--err:#b91c1c;--warn:#a16207;--bd:#d6dbe3}
+@media (prefers-color-scheme:dark){:root{--bg:#12161d;--fg:#e6e9ef;--card:#1b212b;--accent:#7aa2ff;--err:#ff8a8a;--warn:#f5c453;--bd:#333c4a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem}.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px;margin:12px 0}
+label{display:block;margin:10px 0 2px;font-weight:600}input,textarea,select{width:100%;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--fg);font:inherit}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.row{grid-template-columns:1fr}}
+button{background:var(--accent);color:#fff;border:0;border-radius:6px;padding:10px 16px;font:inherit;cursor:pointer;margin:6px 6px 0 0}
+button.sub{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+#msgs li.e{color:var(--err)}#msgs li.w{color:var(--warn)}
+pre#out{white-space:pre-wrap;word-break:break-word;background:var(--bg);padding:12px;border-radius:6px;border:1px solid var(--bd)}
+.note{font-size:.85rem;opacity:.85}.chk{display:flex;gap:8px;align-items:center;margin-top:10px}.chk input{width:auto}
+@media print{body{background:#fff;color:#000}#form,.noprint{display:none}pre#out{border:0}}
+</style>
+</head>
+<body>
+<main>
+<h1>フリーランス取引条件 明示書メーカー</h1>
+<p class="note noprint">フリーランス保護新法(2024年11月施行)で発注側に求められる「取引条件の書面等による明示」のひな形を作ります。入力内容はブラウザ内だけで処理され、外部へ送信されません。法的助言ではありません。</p>
+<form id="form" class="card" autocomplete="off">
+  <div class="row"><div><label for="clientName">発注事業者の名称 *</label><input id="clientName" aria-required="true"></div>
+  <div><label for="freelancerName">フリーランスの名称 *</label><input id="freelancerName" aria-required="true"></div></div>
+  <div class="row"><div><label for="clientContact">発注側 連絡先</label><input id="clientContact"></div>
+  <div><label for="freelancerContact">受託側 連絡先</label><input id="freelancerContact"></div></div>
+  <div class="row"><div><label for="orderDate">業務委託をした日 *</label><input id="orderDate" aria-required="true" type="date"></div>
+  <div><label for="deliveryDate">納期(給付の提供期日)</label><input id="deliveryDate" type="date"></div></div>
+  <label for="scope">給付(業務)の内容 *</label><textarea id="scope" aria-required="true" rows="3"></textarea>
+  <label for="deliverable">成果物</label><input id="deliverable">
+  <label for="place">給付の提供場所</label><input id="place" placeholder="未入力なら電子データ納品として記載">
+  <div class="chk"><input id="hasInspection" type="checkbox"><label for="hasInspection" style="margin:0">検査(検収)を行う</label></div>
+  <div id="inspWrap" hidden><label for="inspectionDate">検査完了日</label><input id="inspectionDate" type="date"></div>
+  <div class="row"><div><label for="amount">報酬の額(円) *</label><input id="amount" aria-required="true" type="number" min="0" step="1" inputmode="numeric"></div>
+  <div><label for="taxMode">金額の区分</label><select id="taxMode"><option value="excl">税抜</option><option value="incl">税込</option></select></div></div>
+  <div class="row"><div><label for="taxRate">消費税率(%)</label><input id="taxRate" type="number" min="0" value="10"></div>
+  <div><label for="paymentDate">支払期日 *</label><input id="paymentDate" aria-required="true" type="date"></div></div>
+  <label for="amountNote">報酬の算定方法・備考</label><input id="amountNote">
+  <div class="row"><div><label for="paymentMethod">支払方法</label><select id="paymentMethod"><option value="bank">銀行振込</option><option value="other">その他(現金以外)</option></select></div>
+  <div><label for="transferFeeBy">振込手数料</label><select id="transferFeeBy"><option value="">記載しない</option><option value="client">発注事業者負担</option><option value="freelancer">受託者負担</option></select></div></div>
+  <div id="pmWrap" hidden><label for="paymentMethodDetail">支払方法の詳細 *</label><input id="paymentMethodDetail"></div>
+  <label for="ipTerms">知的財産権の取扱い</label><textarea id="ipTerms" rows="2"></textarea>
+  <button type="submit">明示書を作成</button>
+</form>
+<ul id="msgs" role="alert" aria-live="polite"></ul>
+<section id="result" class="card" hidden>
+  <pre id="out"></pre>
+  <div class="noprint"><button id="copy" class="sub" type="button">テキストをコピー</button><button id="print" type="button">印刷 / PDF保存</button></div>
+</section>
+<p class="note noprint">※ 実際の運用では、個別事情に応じて弁護士・公正取引委員会・フリーランス・トラブル110番等にご確認ください。</p>
+</main>
+<script src="src/logic.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
