@@ -1,0 +1,22 @@
+const { chromium } = require('playwright');
+const { spawn } = require('child_process');
+const fs = require('fs'), path = require('path'), os = require('os');
+(async () => {
+  const srv = spawn(process.execPath, [path.join(__dirname, '..', 'node_modules', 'vite', 'bin', 'vite.js'), 'preview', '--port', '4998', '--strictPort'], { stdio: 'ignore' });
+  await new Promise(r => setTimeout(r, 2500));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'dn-'));
+  const evil = '<img src=x onerror=window.__xss=1>.pdf';
+  fs.writeFileSync(path.join(tmp, evil), 'x');
+  const br = await chromium.launch();
+  const page = await br.newPage({ viewport: { width: 390, height: 800 } });
+  await page.goto('http://localhost:4998/');
+  await page.setInputFiles('#picker', [path.join(tmp, evil)]);
+  await page.locator('.row input').nth(2).fill('<b>x</b>');
+  await page.waitForTimeout(200);
+  const xss = await page.evaluate(() => window.__xss === 1);
+  const imgs = await page.locator('.row img').count();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
+  await page.screenshot({ path: path.join(tmp, 'm.png') });
+  console.log(JSON.stringify({ xss, imgs, overflow, shot: path.join(tmp, 'm.png') }));
+  await br.close(); srv.kill(); process.exit(0);
+})();

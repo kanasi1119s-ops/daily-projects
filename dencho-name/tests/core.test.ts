@@ -46,6 +46,21 @@ describe('buildFileName', () => {
     expect(buildFileName({ ...e, vendor: '..\\..\\x' }).name).toBe('20261112_請求書_x_110000円.pdf');
   });
 });
+describe('buildFileName robustness', () => {
+  const e = { originalName: 'x.pdf', date: '2026-11-12', docType: '請求書', vendor: '', amount: '1000' };
+  it('does not interpret $ patterns', () => {
+    expect(buildFileName({ ...e, vendor: 'A$&B$`C' }).name).toBe('20261112_請求書_A$&B$`C_1000円.pdf');
+  });
+  it('keeps date and amount when vendor is very long', () => {
+    const n = buildFileName({ ...e, vendor: '株'.repeat(300) }).name as string;
+    expect(n.startsWith('20261112_請求書_')).toBe(true);
+    expect(n.endsWith('_1000円.pdf')).toBe(true);
+    expect(Array.from(n).length).toBeLessThanOrEqual(130);
+  });
+  it('normalizes to NFC', () => {
+    expect(buildFileName({ ...e, vendor: 'ガ'.normalize('NFD') }).name).toContain('_ガ_');
+  });
+});
 describe('dedupe', () => {
   it('suffixes duplicates', () => {
     expect(dedupe(['a.pdf', 'a.pdf', 'A.pdf', 'a_2.pdf'])).toEqual(['a.pdf', 'a_3.pdf', 'A_4.pdf', 'a_2.pdf']);

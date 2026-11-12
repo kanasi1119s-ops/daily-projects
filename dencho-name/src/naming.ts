@@ -66,20 +66,28 @@ export function buildFileName(e: Entry, template = DEFAULT_TEMPLATE): BuildResul
   const errors: string[] = [];
   const date = normalizeDate(e.date);
   const amount = normalizeAmount(e.amount);
-  const vendor = sanitize(toHalfWidth(e.vendor));
-  const type = sanitize(toHalfWidth(e.docType));
+  const vendor = sanitize(toHalfWidth(e.vendor).normalize('NFC'));
+  const type = sanitize(toHalfWidth(e.docType).normalize('NFC'));
   if (!date) errors.push('日付が不正です');
   if (!amount) errors.push('金額が不正です(整数のみ)');
   if (!vendor) errors.push('取引先が未入力です');
   if (errors.length) return { name: null, errors };
-  let base = template
-    .replace('{date}', date!)
-    .replace('{type}', type)
-    .replace('{vendor}', vendor)
-    .replace('{amount}', `${amount}円`)
-    .replace(/_{2,}/g, '_')
-    .replace(/^_|_$/g, '');
-  if (base.length > MAX_BASE_LEN) base = base.slice(0, MAX_BASE_LEN);
+  const build = (v: string) =>
+    template
+      .replace('{date}', () => date!)
+      .replace('{type}', () => type)
+      .replace('{vendor}', () => v)
+      .replace('{amount}', () => `${amount}円`)
+      .replace(/_{2,}/g, '_')
+      .replace(/^_|_$/g, '');
+  // 長すぎる場合は取引先名だけを切り詰め、日付・金額が欠けないようにする
+  let chars = Array.from(vendor);
+  let base = build(vendor);
+  while (Array.from(base).length > MAX_BASE_LEN && chars.length > 1) {
+    const over = Array.from(base).length - MAX_BASE_LEN;
+    chars = chars.slice(0, Math.max(1, chars.length - over));
+    base = build(chars.join('').trim());
+  }
   return { name: base + extOf(e.originalName), errors };
 }
 

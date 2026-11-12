@@ -1,4 +1,4 @@
-import { DEFAULT_TEMPLATE, Entry, buildFileName, dedupe } from './naming';
+import { DEFAULT_TEMPLATE, Entry, buildFileName, dedupe, normalizeAmount, normalizeDate } from './naming';
 import { toCsv } from './csv';
 import { makeZip } from './zip';
 
@@ -86,7 +86,7 @@ function render() {
     outEls.set(it.id, out);
     row.append(
       orig,
-      field(it, 'date', '取引年月日', '2026-11-12 / 令和8年11月12日'),
+      field(it, 'date', '取引年月日', '2026-11-12'),
       field(it, 'docType', '書類種別', '請求書', 'types'),
       field(it, 'vendor', '取引先', '株式会社サンプル'),
       field(it, 'amount', '金額(円)', '110,000'),
@@ -109,7 +109,8 @@ async function download() {
       const name = res[i].name as string;
       files.push({ name, data: new Uint8Array(await it.file.arrayBuffer()) });
       const e = it.entry;
-      rows.push([e.date, e.docType, e.vendor, e.amount, name, it.file.name]);
+      const nd = normalizeDate(e.date) as string;
+      rows.push([`${nd.slice(0, 4)}-${nd.slice(4, 6)}-${nd.slice(6)}`, e.docType, e.vendor, normalizeAmount(e.amount) as string, name, it.file.name]);
     }
     const csvName = dedupe([...files.map((f) => f.name), '索引簿.csv']).pop() as string;
     files.push({ name: csvName, data: new TextEncoder().encode(toCsv(rows)) });

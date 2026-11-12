@@ -1,0 +1,17 @@
+name: dencho-name CI
+on:
+  push:
+    paths: ['dencho-name/**']
+  pull_request:
+    paths: ['dencho-name/**']
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: dencho-name } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: dencho-name/package-lock.json }
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
