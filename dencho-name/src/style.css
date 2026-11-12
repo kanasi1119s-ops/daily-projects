@@ -1,0 +1,24 @@
+:root { --bg:#f7f8fa; --fg:#1b1f24; --mut:#5c6670; --pri:#1f6feb; --bd:#d0d7de; --err:#c62828; --card:#fff; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0f1318; --fg:#e6e9ed; --mut:#9aa5b1; --pri:#4c8dff; --bd:#2d3540; --err:#ff6b6b; --card:#171c23; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif; }
+header,main,footer { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+h1 { margin: 24px 0 4px; font-size: 1.6rem; }
+.lead { color: var(--mut); margin-top: 0; }
+.drop { border:2px dashed var(--bd); border-radius:12px; padding:32px 16px; text-align:center; cursor:pointer; background:var(--card); }
+.drop.over, .drop:focus-visible { border-color: var(--pri); outline: none; }
+.opts { display:flex; gap:12px; align-items:end; justify-content:space-between; flex-wrap:wrap; margin:16px 0; }
+select,input[type=text] { font:inherit; padding:6px 8px; border:1px solid var(--bd); border-radius:6px; background:var(--card); color:var(--fg); width:100%; }
+button { font:inherit; padding:10px 16px; border-radius:8px; border:0; background:var(--pri); color:#fff; cursor:pointer; }
+button:disabled { opacity:.5; cursor:not-allowed; }
+button.ghost { background:transparent; color:var(--mut); border:1px solid var(--bd); }
+.row { background:var(--card); border:1px solid var(--bd); border-radius:10px; padding:12px; margin-bottom:12px; display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; }
+.row .orig { grid-column: 1 / -1; font-size:.85rem; color:var(--mut); word-break:break-all; display:flex; justify-content:space-between; gap:8px; }
+.row label { font-size:.8rem; color:var(--mut); display:block; }
+.row .out { grid-column: 1 / -1; font-family: ui-monospace,monospace; word-break:break-all; font-size:.9rem; }
+.row .out.bad { color: var(--err); }
+.row .rm { background:transparent; color:var(--mut); border:1px solid var(--bd); padding:0 8px; }
+.actions { margin:16px 0 8px; }
+.status { color:var(--mut); }
+footer { color:var(--mut); font-size:.8rem; padding-bottom:32px; }
+@media (max-width: 640px) { .row { grid-template-columns: 1fr 1fr; } }

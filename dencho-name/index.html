@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="電子帳簿保存法の検索要件(日付・金額・取引先)に沿ったファイル名をブラウザだけで付与。ファイルは外部に送信されません。" />
+  <title>電帳ネーム</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <header>
+    <h1>電帳ネーム</h1>
+    <p class="lead">請求書・領収書などの電子取引データに、<strong>日付・金額・取引先</strong>入りのファイル名を付けて、索引簿CSVと一緒にまとめて保存。<br />ファイルはこのブラウザの中だけで処理され、<strong>外部に送信されません</strong>。</p>
+  </header>
+  <main>
+    <section id="drop" class="drop" tabindex="0" role="button" aria-label="ファイルを選択">
+      <p>ここにファイルをドロップ、またはクリックして選択</p>
+      <input id="picker" type="file" multiple hidden />
+    </section>
+    <section class="opts">
+      <label>ファイル名の並び
+        <select id="template">
+          <option value="{date}_{type}_{vendor}_{amount}">日付_書類種別_取引先_金額</option>
+          <option value="{date}_{vendor}_{amount}_{type}">日付_取引先_金額_書類種別</option>
+          <option value="{vendor}_{date}_{amount}_{type}">取引先_日付_金額_書類種別</option>
+        </select>
+      </label>
+      <button id="clear" type="button" class="ghost">全てクリア</button>
+    </section>
+    <div id="rows" aria-live="polite"></div>
+    <section class="actions">
+      <button id="download" type="button" disabled>ZIPでダウンロード(リネーム済みファイル+索引簿.csv)</button>
+      <p id="status" class="status"></p>
+    </section>
+    <datalist id="types">
+      <option value="請求書"></option><option value="領収書"></option><option value="見積書"></option>
+      <option value="納品書"></option><option value="注文書"></option><option value="契約書"></option>
+    </datalist>
+  </main>
+  <footer>
+    <p>※ 本ツールは税務・法律上の助言ではありません。電帳法の要件適用(事務処理規程・訂正削除の防止措置など)は国税庁の案内や税理士にご確認ください。入力された日付・金額・取引先はユーザー自身の責任で正確に入力してください。</p>
+    <p>※ 金額は「税込の取引金額(整数)」を想定しています。</p>
+  </footer>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
