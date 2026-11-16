@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ふるさと納税の寄付を一覧管理。期限・やることチェック・上限額との差を自動表示。データは端末内のみに保存。">
+<title>ふるさと納税 寄付ノート</title>
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>ふるさと納税 寄付ノート</h1>
+    <p class="sub">寄付の記録・期限・やることを1画面で。データはこの端末のブラウザ内にだけ保存されます。</p>
+  </header>
+  <section id="deadlines" class="cards" aria-live="polite"></section>
+  <section class="panel">
+    <h2>寄付上限額（目安）</h2>
+    <label>お使いのシミュレーターで出した上限額（円）
+      <input id="limit" type="text" inputmode="numeric" placeholder="例：50000"></label>
+    <p class="note">上限額の計算は行いません。総務省・各ポータルのシミュレーター等で確認した金額を入力してください。</p>
+    <div id="summary"></div>
+    <ul id="warnings" class="warn"></ul>
+  </section>
+  <section class="panel">
+    <h2>寄付を追加</h2>
+    <form id="form">
+      <label>日付<input id="f-date" type="date" required></label>
+      <label>自治体<input id="f-mun" type="text" maxlength="100" required placeholder="例：○○県△△町"></label>
+      <label>金額（円）<input id="f-amt" type="text" inputmode="numeric" required></label>
+      <label>返礼品メモ<input id="f-item" type="text" maxlength="200"></label>
+      <label>申請方法
+        <select id="f-method"><option value="onestop">ワンストップ特例</option><option value="kakutei">確定申告</option></select></label>
+      <label class="chk"><input id="f-paid" type="checkbox"> 決済済み</label>
+      <button type="submit">追加</button>
+    </form>
+  </section>
+  <section class="panel">
+    <h2>寄付一覧</h2>
+    <div class="tablewrap"><table id="list"></table></div>
+    <div class="actions">
+      <button id="csv" type="button">CSV出力</button>
+      <button id="export" type="button">JSONバックアップ</button>
+      <label class="filebtn">JSON読込<input id="import" type="file" accept="application/json" hidden></label>
+    </div>
+  </section>
+  <section class="panel"><h2>やることリスト</h2><ul id="todos"></ul></section>
+  <footer>
+    <p>本ツールは記録・管理の補助です。税額の計算や税務上の判断は行いません。制度の詳細は総務省「ふるさと納税ポータルサイト」・国税庁・お住まいの自治体の情報をご確認ください。自己負担額2,000円は上限内で寄付した場合の一般的な目安です。</p>
+  </footer>
+</main>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
