@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>取引条件明示書メーカー（フリーランス新法対応・ブラウザ完結）</title>
+<meta name="description" content="フリーランスへの発注時に必要な取引条件の明示事項を入力し、抜け漏れと60日ルールをチェックして文書化。入力内容は送信されません。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>取引条件明示書メーカー</h1>
+  <p class="sub">フリーランス新法の明示事項を入力 → 抜け漏れ・支払期日をチェック → テキスト/印刷で出力。入力内容はブラウザ外に送信されません。</p>
+  <p class="disclaimer">※ 本ツールは法的助言ではありません。必須項目は公正取引委員会等の一次情報で必ずご確認ください。</p>
+</header>
+<main>
+  <form id="form" novalidate>
+    <fieldset><legend>当事者</legend>
+      <label>発注事業者の名称（氏名）<input name="clientName" autocomplete="off"></label>
+      <label>フリーランス（受託者）の名称（氏名）<input name="freelancerName" autocomplete="off"></label>
+      <label>業務委託をした日<input type="date" name="orderDate"></label>
+    </fieldset>
+    <fieldset><legend>業務内容</legend>
+      <label>業務（給付）の内容<textarea name="workContent" rows="4" placeholder="例: ECサイト用バナー画像3点の制作（1200×628px、PNG、修正2回まで）"></textarea></label>
+      <label>知的財産権の取扱い（任意）<input name="ipNote" placeholder="例: 納品物の著作権は報酬支払時に発注者へ譲渡"></label>
+    </fieldset>
+    <fieldset><legend>納期・場所・検査</legend>
+      <label>納期（受領日／役務提供日）<input type="date" name="deliveryDate"></label>
+      <label>納品場所・提供場所<input name="deliveryPlace" placeholder="例: メールで電子データを納品"></label>
+      <label>検査<select name="inspection"><option value="no">なし</option><option value="yes">あり</option></select></label>
+      <label id="inspectionDateRow" hidden>検査完了日<input type="date" name="inspectionDate"></label>
+    </fieldset>
+    <fieldset><legend>報酬・支払</legend>
+      <label>報酬額（円）<input type="number" name="feeAmount" min="0" step="1" inputmode="numeric"></label>
+      <label>消費税<select name="taxMode"><option value="incl">税込</option><option value="excl">税別</option></select></label>
+      <label>算定方法（金額が確定しない場合）<input name="feeMethod" placeholder="例: 時間単価5,000円×稼働時間"></label>
+      <label>支払期日<input type="date" name="paymentDue"></label>
+      <label>支払方法<select name="paymentMethod"><option value="cash">金融機関への振込（現金）</option><option value="other">現金以外</option></select></label>
+      <label id="pmDetailRow" hidden>現金以外の支払方法の詳細<input name="paymentMethodDetail"></label>
+      <label>再委託ですか？<select name="resubcontract"><option value="no">いいえ</option><option value="yes">はい</option></select></label>
+      <label id="origRow" hidden>元委託の支払期日<input type="date" name="originalPaymentDue"></label>
+    </fieldset>
+  </form>
+  <section aria-live="polite">
+    <h2>チェック結果</h2>
+    <ul id="issues"></ul>
+    <h2>プレビュー</h2>
+    <pre id="preview"></pre>
+    <div class="actions">
+      <button id="copy" type="button">テキストをコピー</button>
+      <button id="print" type="button">印刷 / PDF保存</button>
+      <button id="reset" type="button">入力をクリア</button>
+    </div>
+    <p id="status" role="status"></p>
+  </section>
+</main>
+<footer><a href="privacy.html">プライバシー・免責</a></footer>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

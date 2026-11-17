@@ -1,0 +1,12 @@
+:root{--bg:#fff;--fg:#1a1a1a;--mut:#555;--bd:#ccc;--err:#b00020;--warn:#8a5a00;--ok:#1b6e2f;--acc:#1f4fd8}
+@media(prefers-color-scheme:dark){:root{--bg:#14161a;--fg:#eee;--mut:#aaa;--bd:#444;--err:#ff6b81;--warn:#ffc266;--ok:#6fdc8c;--acc:#7aa2ff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+header,footer{padding:16px}h1{margin:0 0 4px;font-size:1.4rem}.sub,.disclaimer{margin:4px 0;color:var(--mut)}.disclaimer{font-size:.9rem}
+main{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 16px 16px}@media(max-width:800px){main{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--bd);border-radius:8px;margin:0 0 12px;padding:8px 12px}legend{font-weight:700;padding:0 6px}
+label{display:block;margin:8px 0;font-size:.95rem}label[hidden]{display:none}
+input,textarea,select{display:block;width:100%;margin-top:4px;padding:8px;font:inherit;color:inherit;background:transparent;border:1px solid var(--bd);border-radius:6px}
+#issues{padding-left:1.2em}.error{color:var(--err)}.warn{color:var(--warn)}.ok{color:var(--ok)}
+pre{white-space:pre-wrap;border:1px solid var(--bd);border-radius:8px;padding:12px;min-height:8em}
+.actions{display:flex;gap:8px;flex-wrap:wrap}button{padding:10px 14px;font:inherit;border:1px solid var(--acc);color:var(--acc);background:transparent;border-radius:6px;cursor:pointer}
+@media print{header,form,.actions,h2,#issues,footer,#status{display:none}main{display:block}pre{border:none}}
