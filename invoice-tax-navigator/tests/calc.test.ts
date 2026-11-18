@@ -42,10 +42,19 @@ describe("calculate", () => {
   });
 });
 
+describe("warnings", () => {
+  it("簡易不可なら継続適用の警告なし、3割適格なら期間注記あり", () => {
+    expect(calculate({ ...base, baseSales: 60_000_000 }).warnings.some((w) => w.includes("2年間"))).toBe(false);
+    expect(calculate(base).warnings.some((w) => w.includes("令和10年"))).toBe(true);
+  });
+});
+
 describe("validate / daysUntil", () => {
   it("負数・NaN を弾く", () => {
     expect(validate({ ...base, sales: -1 }).length).toBe(1);
     expect(validate({ ...base, purchases: NaN }).length).toBe(1);
+    expect(validate({ ...base, sales: 1.5 }).length).toBe(1);
+    expect(validate({ ...base, sales: 1e30 }).length).toBe(1);
     expect(validate(base)).toEqual([]);
   });
   it("残日数", () => {

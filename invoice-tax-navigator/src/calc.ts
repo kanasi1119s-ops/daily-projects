@@ -1,6 +1,8 @@
 /** 消費税(国税+地方消費税) 合計10%で計算。軽減税率・複数事業区分は非対応(MVP)。 */
 export const TAX_RATE = 0.1;
 
+export const MAX_YEN = 1_000_000_000_000;
+
 export type BizType = 1 | 2 | 3 | 4 | 5 | 6;
 
 /** 簡易課税のみなし仕入率 */
@@ -54,6 +56,8 @@ export function validate(i: Input): string[] {
   const e: string[] = [];
   for (const [k, v] of [["課税売上高", i.sales], ["課税仕入高", i.purchases], ["基準期間の課税売上高", i.baseSales]] as const) {
     if (!Number.isFinite(v) || v < 0) e.push(`${k}は0以上の数値を入力してください`);
+    else if (!Number.isInteger(v)) e.push(`${k}は円単位の整数で入力してください`);
+    else if (v > MAX_YEN) e.push(`${k}は1兆円以下で入力してください`);
   }
   return e;
 }
@@ -92,10 +96,8 @@ export function calculate(i: Input): Result {
   const best = ok.length ? ok.reduce((a, b) => (b.tax! < a.tax! ? b : a)).id : null;
 
   if (i.purchases > i.sales) warnings.push("課税仕入高が課税売上高を上回っています。原則課税では還付になる可能性があります(簡易課税・3割特例では還付されません)。");
-  if (i.baseSales > 10_000_000 && i.baseSales <= 50_000_000 && !i.wasExempt === false) {
-    /* no-op: 既に3割特例の理由欄で表示 */
-  }
-  warnings.push("簡易課税は選択届出書の提出が必要で、原則として2年間は継続適用となります(やめる場合も届出が必要)。");
+  if (simpOk) warnings.push("簡易課税は選択届出書の提出が必要で、原則として2年間は継続適用となります(やめる場合も届出が必要)。");
+  if (thirty.eligible) warnings.push("3割特例は令和9年・令和10年(2027・2028年)分の申告に限られた措置で、届出は不要です。2029年以降や簡易課税への切替時期は国税庁の情報でご確認ください。");
   warnings.push("設備投資など高額な仕入がある場合は、原則課税が有利になることがあります。本ツールでは考慮していません。");
 
   return { methods, best, breakEvenPurchaseRatio: 1 - ratio, warnings };

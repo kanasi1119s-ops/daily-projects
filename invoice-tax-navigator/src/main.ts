@@ -50,7 +50,7 @@ function render() {
     })
     .join("");
   $("result").innerHTML = `<h2>納付税額の目安(年額・マイナスは還付)</h2><table><thead><tr><th>方式</th><th class="num">税額</th></tr></thead><tbody>${rows}</tbody></table>
-  <p>原則課税と簡易課税の損益分岐: 課税仕入が課税売上の約${Math.round(r.breakEvenPurchaseRatio * 100)}%を超えると原則課税が有利になります。</p>`;
+  ${r.methods[1].eligible ? `<p>原則課税と簡易課税の損益分岐: 課税仕入が課税売上の約${Math.round(r.breakEvenPurchaseRatio * 100)}%を超えると原則課税が有利になります。</p>` : ""}`;
   $("notes").innerHTML = `<h2>注意点</h2><ul class="notes">${r.warnings.map((w) => `<li>${esc(w)}</li>`).join("")}</ul>`;
 }
 
