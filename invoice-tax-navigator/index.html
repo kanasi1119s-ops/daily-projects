@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>インボイス課税方式ナビ 2027</title>
+<meta name="description" content="2027年の消費税、原則課税・簡易課税・3割特例のどれが有利かを無料で比較。入力内容は端末内で計算され、送信・保存されません。" />
+<link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+<main>
+  <h1>インボイス課税方式ナビ 2027</h1>
+  <p class="lead">原則課税・簡易課税・3割特例の納付税額を比較します。入力内容は端末内で計算され、外部へ送信・保存されません。</p>
+  <div id="deadline" class="banner" role="status"></div>
+  <form id="form" novalidate>
+    <label>2027年の課税売上高の見込み(税抜・円)<input id="sales" type="number" inputmode="numeric" min="0" value="8000000" /></label>
+    <label>2027年の課税仕入高の見込み(税抜・円)<input id="purchases" type="number" inputmode="numeric" min="0" value="1000000" /></label>
+    <label>基準期間(2025年)の課税売上高(税抜・円)<input id="baseSales" type="number" inputmode="numeric" min="0" value="7000000" /></label>
+    <label>事業区分<select id="bizType"></select></label>
+    <label class="check"><input id="isIndividual" type="checkbox" checked /> 個人事業主である</label>
+    <label class="check"><input id="wasExempt" type="checkbox" checked /> インボイス登録を機に免税事業者から課税事業者になった</label>
+  </form>
+  <div id="errors" class="error" role="alert"></div>
+  <section id="result" aria-live="polite"></section>
+  <section id="notes"></section>
+  <footer>
+    <p>本ツールは一般的な目安を示すもので、税務上の助言ではありません。制度は変更される場合があるため、最終判断は<a href="https://www.nta.go.jp/" target="_blank" rel="noopener">国税庁</a>の情報または税理士にご確認ください。</p>
+    <p>前提: 税率10%(軽減税率・複数事業区分・設備投資・免税事業者からの仕入の経過措置は非対応)。</p>
+  </footer>
+</main>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
