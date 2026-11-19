@@ -23,8 +23,9 @@ function updateHints() {
   const dl = paymentDeadline(d.deliveryDate);
   document.getElementById('hint').textContent = dl ? `支払期日の上限(受領日から60日): ${formatDate(parseDate(dl))}` : '';
 }
-form.addEventListener('input', updateHints);
-form.addEventListener('change', updateHints);
+function clearOutput() { out.textContent = ''; copyBtn.disabled = printBtn.disabled = true; }
+form.addEventListener('input', () => { updateHints(); clearOutput(); });
+form.addEventListener('change', () => { updateHints(); clearOutput(); });
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -35,6 +36,7 @@ form.addEventListener('submit', (e) => {
   render(warnings, 'warn');
   for (const el of form.elements) el.removeAttribute?.('aria-invalid');
   for (const er of errors) form.elements[er.key]?.setAttribute('aria-invalid', 'true');
+  if (errors.length) form.elements[errors[0].key]?.focus();
   const ok = errors.length === 0;
   out.textContent = ok ? generateDocument(d) : '';
   copyBtn.disabled = printBtn.disabled = !ok;

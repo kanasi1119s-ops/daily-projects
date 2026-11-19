@@ -27,6 +27,17 @@ const assert = require('node:assert/strict');
   // 4 60-day violation
   await p.fill('[name=paymentDate]', '2026-07-30'); await p.click('button[type=submit]');
   t('60-day violation blocks', (await p.textContent('#msgs')).includes('60日') && (await p.textContent('#out')) === '' && await p.isDisabled('#print'));
+  // 4b inspection yes flow + comma amount
+  await p.fill('[name=paymentDate]', '2026-05-31'); await p.fill('[name=amount]', '１,２００,０００円');
+  await p.selectOption('[name=inspection]', 'yes'); await p.click('button[type=submit]');
+  t('inspection date required in UI', (await p.textContent('#msgs')).includes('検査完了日') && await p.isDisabled('#copy'));
+  t('aria-invalid set', (await p.getAttribute('[name=inspectionDate]', 'aria-invalid')) === 'true');
+  await p.fill('[name=inspectionDate]', '2026-05-05'); await p.click('button[type=submit]');
+  const o2 = await p.textContent('#out');
+  t('inspection+amount doc', o2.includes('検査: あり') && o2.includes('1,200,000円'));
+  t('aria-invalid cleared', (await p.getAttribute('[name=inspectionDate]', 'aria-invalid')) === null);
+  await p.fill('[name=workContent]', '変更'); 
+  t('stale output cleared on edit', (await p.textContent('#out')) === '' && await p.isDisabled('#copy'));
   // 5 mobile layout no h-scroll
   await p.setViewportSize({ width: 375, height: 800 });
   t('no horizontal scroll', await p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
