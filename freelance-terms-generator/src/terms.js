@@ -63,6 +63,8 @@ export function validate(d) {
   if (d.amount !== undefined && d.amount !== '') {
     const n = Number(d.amount);
     if (!Number.isFinite(n) || n < 0 || !Number.isInteger(n)) errors.push({ key: 'amount', message: '報酬の額は0以上の整数で入力してください' });
+    else if (n > 99999999999) errors.push({ key: 'amount', message: '報酬の額が大きすぎます(上限 99,999,999,999円)' });
+    else if (n === 0) warnings.push('報酬の額が0円です。意図した金額か確認してください。');
   }
   const od = parseDate(d.orderDate), dd = parseDate(d.deliveryDate), pd = parseDate(d.paymentDate);
   if (od !== null && dd !== null && dd < od) errors.push({ key: 'deliveryDate', message: '受領期日が業務委託日より前になっています' });
@@ -86,6 +88,7 @@ export function yen(n) {
 
 export function generateDocument(d) {
   d = { ...d, amount: normalizeAmount(d.amount) };
+  if (validate(d).errors.length) throw new Error('入力に誤りがあるため文書を生成できません');
   const lines = [
     '取 引 条 件 明 示 書',
     '(特定受託事業者に係る取引の適正化等に関する法律 第3条に基づく明示)',

@@ -50,3 +50,12 @@ test('invalid date message uses label not key', () => {
   assert.ok(e.includes('業務委託をした日') && !e.includes('orderDate'));
 });
 test('tax note omitted when blank', () => assert.ok(!generateDocument(base()).includes('消費税')));
+
+test('generateDocument refuses invalid input', () => {
+  assert.throws(() => generateDocument({ ...base(), inspection: 'yes', inspectionDate: '' }));
+});
+test('amount cap and zero warning', () => {
+  assert.ok(validate({ ...base(), amount: '99999999999999999999' }).errors.some((e) => e.key === 'amount'));
+  assert.ok(validate({ ...base(), amount: '0' }).warnings.length > 0);
+});
+test('leap year deadline', () => assert.equal(paymentDeadline('2028-01-02'), '2028-03-01'));
