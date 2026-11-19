@@ -40,3 +40,13 @@ test('document contains key items', () => {
   const t = generateDocument(base());
   for (const s of ['山田太郎', 'ロゴ制作', '100,000円', '2026年5月31日', '銀行振込', '検査: なし']) assert.ok(t.includes(s), s);
 });
+
+test('amount normalization (comma/fullwidth)', () => {
+  assert.deepEqual(validate({ ...base(), amount: '１００,０００円' }).errors, []);
+  assert.ok(generateDocument({ ...base(), amount: '100,000' }).includes('100,000円'));
+});
+test('invalid date message uses label not key', () => {
+  const e = validate({ ...base(), orderDate: '2026-13-01' }).errors[0].message;
+  assert.ok(e.includes('業務委託をした日') && !e.includes('orderDate'));
+});
+test('tax note omitted when blank', () => assert.ok(!generateDocument(base()).includes('消費税')));

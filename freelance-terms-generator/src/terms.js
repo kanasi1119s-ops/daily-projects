@@ -42,7 +42,13 @@ export function paymentDeadline(receiptISO) {
 }
 
 // 戻り値: { errors: [{key,message}], warnings: [string] }
+// 全角数字・カンマ・円記号を許容して正規化
+export function normalizeAmount(v) {
+  return String(v ?? '').replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/[,，円¥\s]/g, '');
+}
+
 export function validate(d) {
+  d = { ...d, amount: normalizeAmount(d.amount) };
   const errors = [];
   const warnings = [];
   for (const f of FIELDS) {
@@ -52,7 +58,7 @@ export function validate(d) {
   }
   const dateKeys = FIELDS.filter((f) => f.type === 'date').map((f) => f.key);
   for (const k of dateKeys) {
-    if (d[k] && parseDate(d[k]) === null) errors.push({ key: k, message: `日付の形式が正しくありません(${k})` });
+    if (d[k] && parseDate(d[k]) === null) errors.push({ key: k, message: `「${FIELDS.find((f) => f.key === k).label}」の日付が正しくありません` });
   }
   if (d.amount !== undefined && d.amount !== '') {
     const n = Number(d.amount);
@@ -79,6 +85,7 @@ export function yen(n) {
 }
 
 export function generateDocument(d) {
+  d = { ...d, amount: normalizeAmount(d.amount) };
   const lines = [
     '取 引 条 件 明 示 書',
     '(特定受託事業者に係る取引の適正化等に関する法律 第3条に基づく明示)',
@@ -93,7 +100,7 @@ export function generateDocument(d) {
     d.inspection === 'yes'
       ? `5. 検査: あり(検査完了日: ${formatDate(parseDate(d.inspectionDate))})`
       : '5. 検査: なし',
-    `6. 報酬の額: ${yen(d.amount)}(消費税の取扱い: ${d.taxNote?.trim() || '別途記載のとおり'})`,
+    `6. 報酬の額: ${yen(d.amount)}${d.taxNote?.trim() ? `(消費税の取扱い: ${d.taxNote.trim()})` : ''}`,
     `7. 報酬の支払期日: ${formatDate(parseDate(d.paymentDate))}`,
     `8. 報酬の支払方法: ${d.paymentMethod.trim()}`,
   ];
