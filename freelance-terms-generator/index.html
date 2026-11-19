@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>取引条件明示ジェネレーター</title>
+<meta name="description" content="フリーランス新法の取引条件明示事項をブラウザ内で整形。入力データはサーバーに送信されません。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><h1>取引条件明示ジェネレーター</h1>
+<p>フリーランスへ業務を委託する際の明示事項を、抜け漏れなく文書化します。入力内容はブラウザ内でのみ処理され、送信・保存されません。</p></header>
+<main>
+<form id="f" novalidate>
+  <label>発注事業者の名称<input name="clientName" autocomplete="off"></label>
+  <label>フリーランスの名称<input name="freelancerName" autocomplete="off"></label>
+  <label>業務委託をした日<input type="date" name="orderDate"></label>
+  <label>給付の内容(業務内容)<textarea name="workContent" rows="3"></textarea></label>
+  <label>受領/役務提供を受ける期日<input type="date" name="deliveryDate"></label>
+  <label>受領/役務提供を受ける場所<input name="deliveryPlace" placeholder="例: メールによる納品"></label>
+  <label>検査をしますか<select name="inspection"><option value="no">しない</option><option value="yes">する</option></select></label>
+  <label id="insRow" hidden>検査完了日<input type="date" name="inspectionDate"></label>
+  <label>報酬の額(円)<input name="amount" inputmode="numeric"></label>
+  <label>消費税の取扱い(任意)<input name="taxNote" placeholder="例: 税込 / 別途10%"></label>
+  <label>報酬の支払期日<input type="date" name="paymentDate"></label>
+  <label>報酬の支払方法<input name="paymentMethod" placeholder="例: 銀行振込"></label>
+  <label>特記事項(任意)<textarea name="notes" rows="2"></textarea></label>
+  <p id="hint" class="hint"></p>
+  <button type="submit">明示書を生成</button>
+</form>
+<section>
+  <ul id="msgs" aria-live="polite"></ul>
+  <pre id="out" aria-label="生成結果"></pre>
+  <div class="actions"><button id="copy" type="button" disabled>コピー</button><button id="print" type="button" disabled>印刷/PDF保存</button></div>
+  <p class="disclaimer">本ツールは法的助言ではありません。必要項目は公正取引委員会規則等の最新情報で必ずご確認ください。</p>
+</section>
+</main>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
