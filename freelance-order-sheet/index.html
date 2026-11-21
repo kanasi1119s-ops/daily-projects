@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>フリーランス取引条件 明示書メーカー</title>
+<meta name="description" content="フリーランス・個人事業主向け。取引条件の明示事項を入力して書面を作成。入力内容はブラウザ内だけで処理されます。">
+<style>
+:root{--bg:#f6f7f9;--fg:#1c2330;--card:#fff;--line:#d9dee7;--acc:#2456d6;--err:#c0262d;--warn:#9a6700}
+@media(prefers-color-scheme:dark){:root{--bg:#12151b;--fg:#e8ebf0;--card:#1b2029;--line:#323a48;--acc:#7aa2ff;--err:#ff7b80;--warn:#e3b341}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:960px;margin:0 auto;padding:16px}h1{font-size:1.4rem}h2{font-size:1.1rem;margin-top:0}
+.grid{display:grid;gap:16px;grid-template-columns:1fr 1fr}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+label{display:block;font-weight:600;margin-top:10px;font-size:.9rem}
+input,textarea,select{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font:inherit}
+textarea{min-height:80px}.opt{font-weight:400;opacity:.7}
+button{padding:8px 14px;border:1px solid var(--acc);background:var(--acc);color:#fff;border-radius:6px;font:inherit;cursor:pointer;margin:6px 6px 0 0}
+button.sec{background:transparent;color:var(--acc)}
+pre{white-space:pre-wrap;word-break:break-word;font:inherit;margin:0}
+.issues{list-style:none;padding:0;margin:0 0 8px}.issues .error{color:var(--err)}.issues .warn{color:var(--warn)}
+.note{font-size:.85rem;opacity:.85}.chk label{font-weight:400;margin:4px 0}.chk input{width:auto}
+@media print{body{background:#fff;color:#000}.noprint{display:none!important}.grid{display:block}#printarea{border:0;margin:0!important}#printarea h2{display:none}}
+</style>
+</head>
+<body>
+<main>
+<h1 class="noprint">フリーランス取引条件 明示書メーカー</h1>
+<p class="note noprint">入力内容はお使いのブラウザ内でのみ処理され、サーバーには送信されません(端末内に自動保存されます)。本ツールは法的助言ではありません。最終的な内容は公正取引委員会等の公式情報や専門家にご確認ください。</p>
+<div class="grid">
+<section class="card noprint"><h2>入力</h2><form id="f" autocomplete="off"></form>
+<div><button type="button" id="sample" class="sec">サンプル入力</button><button type="button" id="clear" class="sec">クリア</button></div></section>
+<section>
+<div class="card noprint"><h2>チェック</h2><ul id="issues" class="issues" aria-live="polite"></ul>
+<div class="chk" id="chk"><strong>発注側の禁止行為セルフチェック</strong></div></div>
+<div class="card" id="printarea" style="margin-top:16px"><h2>プレビュー</h2><pre id="out"></pre></div>
+<div class="noprint"><button type="button" id="copy">テキストをコピー</button><button type="button" id="print" class="sec">印刷 / PDF保存</button> <span id="msg" class="note" role="status"></span></div>
+</section></div>
+<p class="note noprint">参考: <a href="https://www.jftc.go.jp/freelancelaw_2026/" target="_blank" rel="noopener">公正取引委員会 フリーランス法特設ページ</a></p>
+</main>
+<script type="module" src="/src/main.ts"></script>
+</body></html>
