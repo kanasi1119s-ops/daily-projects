@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>インボイスチェッカー | 適格請求書の記載漏れ・税額ミスをブラウザ内で確認</title>
+<meta name="description" content="請求書の記載事項(登録番号・税率別税額・端数処理)をチェック。入力内容は送信されずブラウザ内で処理されます。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><h1>インボイスチェッカー</h1>
+<p>適格請求書の記載事項と税額計算を、ブラウザの中だけで確認します。入力内容は外部に送信されません。</p></header>
+<main>
+<section aria-labelledby="h-basic"><h2 id="h-basic">基本情報</h2>
+<label>種類
+<select id="kind"><option value="standard">適格請求書</option><option value="simplified">適格簡易請求書(小売・飲食等)</option></select></label>
+<label>発行者の氏名・名称<input id="issuerName" autocomplete="off"></label>
+<label>登録番号<input id="regNo" placeholder="T1234567890123" autocomplete="off"></label>
+<label>取引年月日<input id="date" type="date"></label>
+<label id="recipientLabel">交付先の氏名・名称<input id="recipientName" autocomplete="off"></label>
+<label>金額の表示<select id="taxIncluded"><option value="false">税抜</option><option value="true">税込</option></select></label>
+<label>端数処理<select id="rounding"><option value="floor">切り捨て</option><option value="round">四捨五入</option><option value="ceil">切り上げ</option></select></label>
+</section>
+<section aria-labelledby="h-items"><h2 id="h-items">明細</h2>
+<table id="items"><thead><tr><th>品名</th><th>数量</th><th>単価</th><th>税率</th><th>※</th><th></th></tr></thead><tbody></tbody></table>
+<button type="button" id="addRow">明細を追加</button>
+</section>
+<section aria-labelledby="h-tax"><h2 id="h-tax">請求書に記載した消費税額</h2>
+<label>10%の税額<input id="tax10" inputmode="numeric"></label>
+<label>8%の税額<input id="tax8" inputmode="numeric"></label>
+</section>
+<button type="button" id="run" class="primary">チェックする</button>
+<section id="report" aria-live="polite" hidden></section>
+</main>
+<footer><p>本ツールは記載事項の目安を示すもので、税務上の判断を保証するものではありません。最終確認は国税庁の公表情報または税理士等にご相談ください。登録番号の実在確認は国税庁「適格請求書発行事業者公表サイト」で行ってください。</p></footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

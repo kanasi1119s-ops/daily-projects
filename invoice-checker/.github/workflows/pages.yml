@@ -1,0 +1,17 @@
+# 公開用(未有効化)。このファイルをリポジトリ直下の .github/workflows に移すと有効化できます。公開は人間の承認後に。
+name: deploy-pages
+on: { workflow_dispatch: {} }
+permissions: { contents: read, pages: write, id-token: write }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: { name: github-pages }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm test && npm run build
+        working-directory: invoice-checker
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: invoice-checker/dist }
+      - uses: actions/deploy-pages@v4
