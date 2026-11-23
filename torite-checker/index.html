@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>取適法・フリーランス法 支払期日チェッカー</title>
+<meta name="description" content="受領日から60日以内の支払期日、遅延利息の目安、取適法/フリーランス法の適用目安をブラウザ上で確認。入力内容はサーバーに送信されません。">
+<style>
+:root{--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--acc:#1f6feb;--ok:#177a3c;--ng:#b42318;--mut:#5b6573;--bd:#d8dde5}
+@media(prefers-color-scheme:dark){:root{--bg:#10141b;--fg:#e6e9ef;--card:#1a212c;--acc:#5aa2ff;--ok:#4cc27a;--ng:#ff7b6e;--mut:#9aa5b5;--bd:#2c3644}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}h1{font-size:1.3rem}h2{font-size:1.1rem;margin-top:0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.tabs button{padding:8px 14px;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:8px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
+section.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:16px}
+label{display:block;margin:10px 0 2px;font-size:.9rem;color:var(--mut)}input,select{width:100%;padding:8px;font:inherit;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--fg)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:520px){.row{grid-template-columns:1fr}}
+.res{margin-top:14px;padding:12px;border-radius:8px;border:1px solid var(--bd)}.ok{color:var(--ok)}.ng{color:var(--ng)}.mut{color:var(--mut);font-size:.85rem}
+.warn{border-left:4px solid var(--ng);padding:8px 12px;background:var(--card);margin:12px 0;font-size:.9rem}
+button.act{margin-top:10px;padding:8px 14px;border-radius:8px;border:0;background:var(--acc);color:#fff;cursor:pointer}
+li{margin:4px 0}[hidden]{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>取適法・フリーランス法 支払期日チェッカー</h1>
+<p class="mut">入力内容はこのブラウザ内でのみ計算され、外部に送信・保存されません。</p>
+<div class="warn"><strong>ご注意:</strong> 本ツールは一般的な目安を示すものであり、法律相談・法的助言ではありません。個別の取引の適否は、公正取引委員会・中小企業庁・厚生労働省の公式情報や弁護士等の専門家にご確認ください。</div>
+<div class="tabs" role="tablist">
+<button role="tab" id="t1" aria-selected="true" aria-controls="p1">支払期日・遅延利息</button>
+<button role="tab" id="t2" aria-selected="false" aria-controls="p2">締め日運用チェック</button>
+<button role="tab" id="t3" aria-selected="false" aria-controls="p3">適用判定の目安</button>
+<button role="tab" id="t4" aria-selected="false" aria-controls="p4">発注書チェックリスト</button>
+</div>
+
+<section class="card" id="p1" role="tabpanel">
+<h2>受領日から60日以内の支払期日</h2>
+<div class="row"><div><label for="receipt">給付の受領日(納品・検収ではなく受領)</label><input type="date" id="receipt"></div>
+<div><label for="planned">支払予定日(任意)</label><input type="date" id="planned"></div></div>
+<div class="row"><div><label for="amount">報酬額(円・税込・任意)</label><input type="number" id="amount" min="0" step="1" inputmode="numeric"></div>
+<div><label for="rate">遅延利息率(年・%)</label><input type="number" id="rate" value="14.6" min="0" step="0.1"></div></div>
+<div class="res" id="r1" aria-live="polite">受領日を入力してください。</div>
+<p class="mut">受領日を1日目として数えた60日目を「最遅の支払期日」として表示します(保守的な数え方)。遅延利息率14.6%は公正取引委員会規則の定める率を初期値としていますが、最新の規定をご確認ください。</p>
+</section>
+
+<section class="card" id="p2" role="tabpanel" hidden>
+<h2>締め日運用で60日を超えないか</h2>
+<div class="row"><div><label for="closing">締め日</label><select id="closing"></select></div>
+<div><label for="months">支払月</label><select id="months"><option value="1">翌月</option><option value="2">翌々月</option></select></div></div>
+<div class="row"><div><label for="payday">支払日</label><select id="payday"></select></div>
+<div><label for="year">対象年</label><input type="number" id="year" min="2000" max="2100"></div></div>
+<div class="res" id="r2" aria-live="polite"></div>
+<p class="mut">指定年の全ての受領日を走査し、最も支払までが長くなるケースを表示します。</p>
+</section>
+
+<section class="card" id="p3" role="tabpanel" hidden>
+<h2>どの法律の対象になりそうか(目安)</h2>
+<label for="type">取引の種類</label>
+<select id="type"><option value="A">製造委託・修理委託・プログラム作成・運送/倉庫保管/情報処理の役務提供 等</option><option value="B">上記以外の情報成果物作成(デザイン・動画・文章等)・役務提供</option></select>
+<div class="row"><div><label for="cc">発注側の資本金(万円・個人は0)</label><input type="number" id="cc" min="0" value="0"></div>
+<div><label for="ce">発注側の従業員数(人)</label><input type="number" id="ce" min="0" value="0"></div></div>
+<label><input type="checkbox" id="ind" checked style="width:auto"> 受注側は個人(法人格なし)</label>
+<div class="row"><div><label for="tc">受注側の資本金(万円・法人のみ)</label><input type="number" id="tc" min="0" value="0"></div>
+<div><label for="te">受注側の従業員数(人)</label><input type="number" id="te" min="0" value="0"></div></div>
+<div class="res" id="r3" aria-live="polite"></div>
+<p class="mut">基準額は制度改正により変わる可能性があります。必ず公式情報で最終確認してください。</p>
+</section>
+
+<section class="card" id="p4" role="tabpanel" hidden>
+<h2>発注書(取引条件の明示)チェックリスト</h2>
+<ul id="cl"></ul>
+<button class="act" id="copy">チェック結果をテキストでコピー</button>
+<p class="mut" id="copied"></p>
+</section>
+</main>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
