@@ -33,7 +33,7 @@ li{margin:4px 0}[hidden]{display:none}
 <button role="tab" id="t4" aria-selected="false" aria-controls="p4">発注書チェックリスト</button>
 </div>
 
-<section class="card" id="p1" role="tabpanel">
+<section class="card" id="p1" role="tabpanel" aria-labelledby="t1">
 <h2>受領日から60日以内の支払期日</h2>
 <div class="row"><div><label for="receipt">給付の受領日(納品・検収ではなく受領)</label><input type="date" id="receipt"></div>
 <div><label for="planned">支払予定日(任意)</label><input type="date" id="planned"></div></div>
@@ -43,7 +43,7 @@ li{margin:4px 0}[hidden]{display:none}
 <p class="mut">受領日を1日目として数えた60日目を「最遅の支払期日」として表示します(保守的な数え方)。遅延利息率14.6%は公正取引委員会規則の定める率を初期値としていますが、最新の規定をご確認ください。</p>
 </section>
 
-<section class="card" id="p2" role="tabpanel" hidden>
+<section class="card" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
 <h2>締め日運用で60日を超えないか</h2>
 <div class="row"><div><label for="closing">締め日</label><select id="closing"></select></div>
 <div><label for="months">支払月</label><select id="months"><option value="1">翌月</option><option value="2">翌々月</option></select></div></div>
@@ -53,7 +53,7 @@ li{margin:4px 0}[hidden]{display:none}
 <p class="mut">指定年の全ての受領日を走査し、最も支払までが長くなるケースを表示します。</p>
 </section>
 
-<section class="card" id="p3" role="tabpanel" hidden>
+<section class="card" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
 <h2>どの法律の対象になりそうか(目安)</h2>
 <label for="type">取引の種類</label>
 <select id="type"><option value="A">製造委託・修理委託・プログラム作成・運送/倉庫保管/情報処理の役務提供 等</option><option value="B">上記以外の情報成果物作成(デザイン・動画・文章等)・役務提供</option></select>
@@ -66,7 +66,7 @@ li{margin:4px 0}[hidden]{display:none}
 <p class="mut">基準額は制度改正により変わる可能性があります。必ず公式情報で最終確認してください。</p>
 </section>
 
-<section class="card" id="p4" role="tabpanel" hidden>
+<section class="card" id="p4" role="tabpanel" aria-labelledby="t4" hidden>
 <h2>発注書(取引条件の明示)チェックリスト</h2>
 <ul id="cl"></ul>
 <button class="act" id="copy">チェック結果をテキストでコピー</button>
