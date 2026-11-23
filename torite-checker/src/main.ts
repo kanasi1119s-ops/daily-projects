@@ -27,6 +27,8 @@ function calc1() {
     else if (c.ok) html += `<span class="ok">60日以内に収まっています。</span>`;
     else html += `<span class="ng">60日を${c.overdueDays}日超過しています。</span>` + (num("amount") > 0 ? `<br>超過分の遅延利息の目安: <strong>${c.interest.toLocaleString()}円</strong>` : "");
   }
+  const neg = ($<HTMLInputElement>("amount").value !== "" && Number($<HTMLInputElement>("amount").value) < 0) || Number($<HTMLInputElement>("rate").value) < 0;
+  if (neg) html += `<br><span class="ng">負の値は0として扱っています。入力を確認してください。</span>`;
   out.innerHTML = html;
 }
 ["receipt", "planned", "amount", "rate"].forEach(i => $(i).addEventListener("input", calc1));
