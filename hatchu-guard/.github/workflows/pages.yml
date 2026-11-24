@@ -1,0 +1,23 @@
+# 人間が GitHub Pages を有効化した後に動作する(公開手順書: docs/DEPLOY.md)
+name: Deploy to GitHub Pages
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm test
+        working-directory: hatchu-guard
+      - run: npm run build
+        working-directory: hatchu-guard
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: hatchu-guard/dist }
+      - uses: actions/deploy-pages@v4
