@@ -43,3 +43,10 @@ test('evaluateProhibited', () => {
   assert.equal(evaluateProhibited({ cut: true, refuse: false }).hits.length, 1);
   assert.equal(evaluateProhibited({ cut: true }, 0).applicable, false);
 });
+
+test('reward: 全角数字・カンマ', () => {
+  assert.deepEqual(validateSpec({ ...base, reward: '１５０，０００' }).errors, []);
+  assert.ok(renderSpec({ ...base, reward: '１５０，０００' }).includes('150,000円'));
+});
+test('reward: 小数は不可', () => { assert.ok(validateSpec({ ...base, reward: '1000.5' }).errors.length > 0); });
+test('非銀行振込で補足なしは警告', () => { assert.ok(validateSpec({ ...base, payMethod: '現金' }).warnings.length === 1); });

@@ -49,7 +49,7 @@ $('#btn-copy').addEventListener('click', async () => {
 $('#btn-download').addEventListener('click', () => {
   const url = URL.createObjectURL(new Blob([lastText], { type: 'text/plain;charset=utf-8' }));
   const a = document.createElement('a');
-  a.href = url; a.download = '取引条件明示書.txt';
+  a.href = url; a.download = `meiji-sho_${$('[name=orderDate]').value || 'draft'}.txt`;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });

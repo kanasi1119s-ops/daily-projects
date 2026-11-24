@@ -80,7 +80,7 @@ export function validateSpec(f) {
   if (!hasReward && !hasCalc) {
     errors.push('報酬の額、または算定方法のいずれかが必要です');
   } else if (hasReward) {
-    const n = Number(String(f.reward).replace(/[,，円\s]/g, ''));
+    const n = toNumber(f.reward);
     if (!Number.isFinite(n) || n <= 0 || !Number.isInteger(n)) errors.push('報酬の額は正の整数で入力してください');
   }
   const order = parseDate(f.orderDate), delivery = parseDate(f.deliveryDate), pay = parseDate(f.payDate);
@@ -88,7 +88,7 @@ export function validateSpec(f) {
   if (delivery !== null && pay !== null) {
     // 受領日は納期どおりと仮定して判定(実際の受領日が遅れる場合は②タブで再確認)
     const r = checkPaymentDate(f.deliveryDate, f.payDate);
-    if (!r.ok) warnings.push(`支払期日が納期(受領日)から60日以内(${r.deadline}まで)を${r.overDays}日超過しています。法定の上限を超える設定はできません`);
+    if (!r.ok) warnings.push(`支払期日が納期(受領日)から60日以内(${r.deadline}まで)を${r.overDays}日超過しています。法定の上限を超えているため、支払期日の前倒しが必要です`);
     if (pay < delivery) warnings.push('支払期日が納期より前になっています(前払いの場合は問題ありません)');
   }
   if (f.payMethod && f.payMethod !== '銀行振込' && String(f.payMethodNote ?? '').trim() === '') {
@@ -100,8 +100,12 @@ export function validateSpec(f) {
   return { errors, warnings };
 }
 
+export function toNumber(v) {
+  return Number(String(v).normalize('NFKC').replace(/[,円\s]/g, ''));
+}
+
 export function formatYen(v) {
-  const n = Number(String(v).replace(/[,，円\s]/g, ''));
+  const n = toNumber(v);
   if (!Number.isFinite(n)) return String(v);
   return `${n.toLocaleString('ja-JP')}円`;
 }
