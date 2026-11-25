@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>請求書・インボイス計算ツール</title>
+<meta name="description" content="消費税の端数処理、源泉徴収、免税事業者への支払いに対する仕入税額控除の経過措置を、ブラウザ内だけで計算します。">
+<style>
+:root{--bg:#f7f8fa;--fg:#1d2330;--card:#fff;--ac:#2456d6;--mu:#667085;--bd:#dde2ea}
+@media (prefers-color-scheme:dark){:root{--bg:#10131a;--fg:#e8ebf2;--card:#181c26;--ac:#7aa2ff;--mu:#9aa4b8;--bd:#2a3040}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:720px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem}h2{font-size:1.1rem;margin-top:0}
+section{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin:16px 0}
+label{display:block;margin:8px 0 2px;font-size:.9rem;color:var(--mu)}
+input,select{width:100%;padding:10px;font-size:1rem;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+dl{display:grid;grid-template-columns:1fr auto;gap:4px 12px;margin:12px 0 0}dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+.big{font-weight:700;color:var(--ac)}
+.err{color:#c0392b;min-height:1.4em;font-size:.9rem}
+.note{font-size:.8rem;color:var(--mu)}
+</style>
+</head>
+<body>
+<main>
+<h1>請求書・インボイス計算ツール</h1>
+<p class="note">入力内容はブラウザ内でのみ計算され、送信・保存されません。</p>
+
+<section aria-labelledby="h1">
+<h2 id="h1">① 消費税・源泉徴収</h2>
+<div class="row">
+<div><label for="amt">金額（円）</label><input id="amt" inputmode="numeric" value="100000"></div>
+<div><label for="mode">金額の種類</label><select id="mode"><option value="excl">税抜</option><option value="incl">税込</option></select></div>
+<div><label for="rate">税率</label><select id="rate"><option value="10">10%</option><option value="8">8%（軽減）</option></select></div>
+<div><label for="rnd">端数処理</label><select id="rnd"><option value="floor">切り捨て</option><option value="round">四捨五入</option><option value="ceil">切り上げ</option></select></div>
+</div>
+<label><input type="checkbox" id="wh" style="width:auto"> 源泉徴収あり（原稿料・デザイン料など）</label>
+<div class="err" id="err1" role="alert"></div>
+<dl>
+<dt>税抜金額</dt><dd id="o-net">-</dd>
+<dt>消費税</dt><dd id="o-tax">-</dd>
+<dt>税込金額</dt><dd id="o-gross">-</dd>
+<dt>源泉徴収税額</dt><dd id="o-wh">-</dd>
+<dt>差引受取額</dt><dd id="o-pay" class="big">-</dd>
+</dl>
+</section>
+
+<section aria-labelledby="h2">
+<h2 id="h2">② 免税事業者への支払い（仕入税額控除の経過措置）</h2>
+<div class="row">
+<div><label for="tax2">支払った消費税相当額（円）</label><input id="tax2" inputmode="numeric" value="10000"></div>
+<div><label for="date2">取引日</label><input id="date2" type="date"></div>
+</div>
+<div class="err" id="err2" role="alert"></div>
+<dl>
+<dt>控除割合</dt><dd id="p-rate">-</dd>
+<dt>控除できる目安額</dt><dd id="p-ded" class="big">-</dd>
+<dt>控除できない額</dt><dd id="p-non">-</dd>
+</dl>
+</section>
+
+<p class="note">※ 本ツールは一般的な計算の目安です。税務上の判断を保証するものではありません。実際の申告・請求は税理士または国税庁の最新情報で必ず確認してください。経過措置の割合は2026年11月時点の制度理解に基づきます（要確認）。</p>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>

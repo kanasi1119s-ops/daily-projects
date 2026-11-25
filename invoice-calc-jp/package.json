@@ -1,0 +1,1 @@
+{"name":"invoice-calc-jp","version":"0.1.0","private":true,"type":"module","scripts":{"test":"node --test test/calc.test.js","e2e":"node test/e2e.cjs"}}
