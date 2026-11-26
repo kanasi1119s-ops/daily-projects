@@ -55,3 +55,7 @@ test('同額なら表示順で先を優先', () => {
   const r = compare({ ...base, discountPct: 0 });
   assert.equal(r.best, 'exempt');
 });
+test('極端に大きい入力は上限で丸める', () => {
+  const r = compare({ ...base, sales: 1e15 });
+  assert.equal(r.outTax, 1_000_000_000);
+});

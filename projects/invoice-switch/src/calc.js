@@ -1,6 +1,7 @@
 import { RULES } from './rules.js';
 
-const num = (v) => (Number.isFinite(v) ? v : 0);
+const MAX = 10_000_000_000; // 入力上限(100億円)。それ以上は試算対象外として丸める
+const num = (v) => (Number.isFinite(v) ? Math.min(v, MAX) : 0);
 
 /**
  * @param {object} i

@@ -17,7 +17,9 @@ function render() {
     discountPct: $('discountPct').valueAsNumber, firstTime: $('firstTime').value === '1',
   });
   if (!(r.outTax > 0)) { $('out').innerHTML = '<p>年間の課税売上を入力すると比較結果が表示されます。</p>'; return; }
-  $('out').innerHTML = r.results.map((x) => {
+  const hint = $('firstTime').value === '1' && $('baseSales').valueAsNumber > RULES.smallLimit
+    ? '<p class="warn">2年前の課税売上が1,000万円を超える場合、通常すでに課税事業者です。「登録で初めて課税事業者」の選択と矛盾していないかご確認ください。</p>' : '';
+  $('out').innerHTML = hint + r.results.map((x) => {
     const cls = !x.ok ? 'res ng' : x.key === r.best ? 'res best' : 'res';
     const detail = x.ok
       ? `消費税 ${yen(x.tax)}${x.tax < 0 ? '（還付見込み）' : ''}${x.indirect ? ` ＋ 想定値引き等 ${yen(x.indirect)}` : ''}${x.note ? `（${esc(x.note)}）` : ''}`
