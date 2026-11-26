@@ -14,10 +14,4 @@ export const RULES = {
   smallLimit: 10_000_000,      // 2割/3割特例: 基準期間の課税売上高上限
   twentyPercent: { rate: 0.2, lastYear: 2026 },            // 個人: 令和8年分まで
   thirtyPercent: { rate: 0.3, years: [2027, 2028] },       // 個人のみ 令和9・10年分
-  // 買い手側: 免税事業者からの仕入れの控除割合（参考表示のみ）
-  buyerCredit: [
-    { from: '2026-10-01', to: '2028-09-30', ratio: 0.7 },
-    { from: '2028-10-01', to: '2030-09-30', ratio: 0.5 },
-    { from: '2030-10-01', to: '2031-09-30', ratio: 0.3 },
-  ],
 };

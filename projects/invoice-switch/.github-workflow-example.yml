@@ -1,0 +1,11 @@
+# 公開時に .github/workflows/ へ移して使用（人間が実施）
+name: test
+on: [push]
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node --test projects/invoice-switch/test/*.test.js
