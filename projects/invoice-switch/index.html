@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>インボイス・スイッチ｜登録する？しない？年間負担を比較</title>
+<meta name="description" content="免税のまま／2割特例／3割特例／簡易課税／本則課税の年間負担を並べて比較する目安試算ツール。">
+<style>
+:root{--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--line:#d9dee7;--ac:#2456d6;--ok:#0a7a4b;--ng:#8a94a6}
+@media(prefers-color-scheme:dark){:root{--bg:#12161d;--fg:#e6eaf2;--card:#1b212b;--line:#2d3644;--ac:#7aa2ff;--ok:#4cc38a;--ng:#7a8599}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:.5rem 0}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0}
+label{display:block;font-size:.9rem;margin:10px 0 2px}input,select{width:100%;padding:9px;font-size:1rem;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:520px){.row{grid-template-columns:1fr}}
+.res{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.res:last-child{border:0}.res.best{font-weight:700;color:var(--ok)}.res.ng{color:var(--ng)}.sub{font-size:.8rem;font-weight:400}
+.warn{font-size:.82rem;border-left:4px solid var(--ac);padding-left:10px}
+</style>
+</head>
+<body>
+<main>
+<h1>インボイス・スイッチ</h1>
+<p>登録する／しないで、年間の負担（消費税の納付額＋取引先への影響の仮定）がどう変わるかを比較する目安ツールです。入力内容は端末内で計算され、送信されません。</p>
+<form id="f" class="card" novalidate>
+  <div class="row">
+    <div><label for="year">対象年</label>
+      <select id="year"><option>2026</option><option>2027</option><option>2028</option><option>2029</option></select></div>
+    <div><label for="category">簡易課税の事業区分</label><select id="category"></select></div>
+  </div>
+  <div class="row">
+    <div><label for="sales">年間の課税売上（税抜・円）</label><input id="sales" type="number" inputmode="numeric" min="0" value="5000000"></div>
+    <div><label for="purchases">年間の課税仕入・経費（税抜・円）</label><input id="purchases" type="number" inputmode="numeric" min="0" value="1000000"></div>
+  </div>
+  <div class="row">
+    <div><label for="baseSales">2年前の課税売上（税抜・円）</label><input id="baseSales" type="number" inputmode="numeric" min="0" value="4000000"></div>
+    <div><label for="firstTime">登録で初めて課税事業者になりますか</label>
+      <select id="firstTime"><option value="1">はい（現在は免税事業者）</option><option value="0">いいえ</option></select></div>
+  </div>
+  <div class="row">
+    <div><label for="invoiceShare">インボイスを求める取引先の売上割合（%）</label><input id="invoiceShare" type="number" inputmode="numeric" min="0" max="100" value="50"></div>
+    <div><label for="discountPct">登録しない場合の値引き・失注の想定（%）※仮定</label><input id="discountPct" type="number" inputmode="numeric" min="0" max="100" value="10"></div>
+  </div>
+</form>
+<section class="card" aria-live="polite"><h2 style="margin-top:0;font-size:1.1rem">比較結果</h2><div id="out"></div></section>
+<p class="warn">標準税率10%のみ対応。結果は一般的な目安であり、税務上の助言ではありません。特例の適用可否・届出・最新の制度は国税庁の公式情報または税理士にご確認ください。取引先への影響は入力された仮定に基づく数値で、実際の結果を示すものではありません。</p>
+</main>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
