@@ -1,0 +1,2 @@
+{"name":"freelance-order-checker","version":"0.1.0","private":true,"type":"module",
+"scripts":{"test":"node --test test/*.test.js","build":"node build.js","start":"node serve.js"}}
