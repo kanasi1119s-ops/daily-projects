@@ -1,0 +1,13 @@
+name: invoice-calc-ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: invoice-calc/package-lock.json }
+      - run: npm ci
+        working-directory: invoice-calc
+      - run: npm test && npm run build
+        working-directory: invoice-calc

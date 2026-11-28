@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>請求額かんたん計算 | 消費税・源泉徴収・手取り逆算</title>
+<meta name="description" content="消費税(10%/8%)と源泉徴収税を税率ごとに計算し、手取りから請求額を逆算できるブラウザ完結の無料ツール。入力内容は外部に送信されません。" />
+<link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+<noscript><p style="padding:16px">このツールの利用にはJavaScriptを有効にしてください。</p></noscript>
+<main>
+  <h1>請求額かんたん計算</h1>
+  <p class="lead">消費税と源泉徴収を税率ごとに計算。入力内容はこの端末の中だけで処理され、送信されません。</p>
+
+  <div class="tabs" role="tablist">
+    <button id="tab-fwd" role="tab" aria-selected="true">請求額を計算</button>
+    <button id="tab-rev" role="tab" aria-selected="false">手取りから逆算</button>
+  </div>
+
+  <section class="card" id="opts">
+    <h2>設定</h2>
+    <label>端数処理
+      <select id="rounding"><option value="floor">切り捨て</option><option value="round">四捨五入</option><option value="ceil">切り上げ</option></select>
+    </label>
+    <label><input type="checkbox" id="withholding" checked /> 源泉徴収あり(報酬・料金)</label>
+    <label>源泉徴収の計算基準
+      <select id="wbase"><option value="excl">税抜(消費税を区分記載)</option><option value="incl">税込</option></select>
+    </label>
+  </section>
+
+  <section class="card" id="fwd">
+    <h2>明細</h2>
+    <label><input type="checkbox" id="incl" /> 入力金額は税込</label>
+    <div id="rows"></div>
+    <button id="add" type="button">+ 明細を追加</button>
+  </section>
+
+  <section class="card" id="rev" hidden>
+    <h2>受け取りたい振込額</h2>
+    <label>振込額(円)<input id="target" type="text" inputmode="numeric" placeholder="例: 100000" /></label>
+    <p class="note">10%課税の取引として、必要な税抜報酬額を求めます。</p>
+  </section>
+
+  <section class="card result" aria-live="polite">
+    <h2>結果</h2>
+    <div id="out"></div>
+  </section>
+
+  <p class="disclaimer">※ 参考計算です。税務上の確定額・個別の適用可否は国税庁の情報または税理士にご確認ください。源泉徴収は国税庁「報酬・料金等の源泉徴収」の税率(10.21%/100万円超部分20.42%)で計算しています。</p>
+</main>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
